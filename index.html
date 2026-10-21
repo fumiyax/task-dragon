@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ドラゴンタスク</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐉 ドラゴンタスク</h1>
+            <p class="date" id="currentDate"></p>
+        </header>
+
+        <main>
+            <!-- 今日のタスク -->
+            <section class="tasks-section">
+                <h2>きょうのタスク</h2>
+                <div class="task-list">
+                    <div class="task-item">
+                        <label class="task-label">
+                            <input type="checkbox" id="morning" class="task-checkbox">
+                            <span class="task-icon">🌅</span>
+                            <span class="task-name">あさ</span>
+                        </label>
+                    </div>
+                    <div class="task-item">
+                        <label class="task-label">
+                            <input type="checkbox" id="afternoon" class="task-checkbox">
+                            <span class="task-icon">☀️</span>
+                            <span class="task-name">ひる</span>
+                        </label>
+                    </div>
+                    <div class="task-item">
+                        <label class="task-label">
+                            <input type="checkbox" id="night" class="task-checkbox">
+                            <span class="task-icon">🌙</span>
+                            <span class="task-name">よる</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="today-count">
+                    きょう: <span id="todayCount">0</span> / 3
+                </div>
+            </section>
+
+            <!-- ドラゴンの卵 -->
+            <section class="egg-section">
+                <h2>ドラゴンのたまご</h2>
+                <div class="egg-container">
+                    <div class="egg" id="egg">🥚</div>
+                    <div class="egg-message" id="eggMessage">たまごをそだてよう！</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressDays">0</span> / 7 にち
+                </div>
+                <div class="encourage-message" id="encourageMessage"></div>
+            </section>
+
+            <!-- ドラゴンコレクション -->
+            <section class="collection-section">
+                <h2>ドラゴンコレクション</h2>
+                <div class="dragon-grid" id="dragonGrid">
+                    <div class="empty-message">まだドラゴンがいません</div>
+                </div>
+            </section>
+
+            <!-- リセットボタン（開発用） -->
+            <button class="reset-btn" id="resetBtn">データをリセット</button>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
