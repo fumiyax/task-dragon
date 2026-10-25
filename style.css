@@ -18,8 +18,9 @@ body {
 }
 
 header {
-    background: #000080;
-    border: 4px solid #fff;
+    background: #000;
+    border: none;
+    border-bottom: 2px solid #fff;
     border-radius: 0;
     padding: 20px;
     margin-bottom: 20px;
@@ -49,26 +50,28 @@ h1 {
     text-decoration: none;
     font-size: 1rem;
     padding: 8px 16px;
-    background: #000080;
-    border: 2px solid #fff;
+    background: #000;
+    border: 1px solid #fff;
     transition: all 0.1s;
 }
 
 .back-link:hover {
     background: #fff;
-    color: #000080;
+    color: #000;
 }
 
 main {
-    background: #000080;
-    border: 4px solid #fff;
+    background: #000;
+    border: none;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
     padding: 0;
 }
 
 section {
     margin: 0;
     padding: 20px;
-    border-bottom: 4px solid #fff;
+    border-bottom: 2px solid #fff;
 }
 
 section:last-child {
@@ -94,8 +97,9 @@ h2 {
     justify-content: space-between;
     margin-bottom: 15px;
     padding: 15px;
-    background: #000080;
-    border: 2px solid #fff;
+    background: #000;
+    border: none;
+    border-bottom: 1px solid #fff;
 }
 
 .level-display {
@@ -136,15 +140,15 @@ h2 {
 
 .job-progress {
     padding: 15px;
-    background: #000080;
-    border: 2px solid #fff;
+    background: #000;
+    border: none;
 }
 
 .progress-bar {
     width: 100%;
     height: 24px;
     background: #000;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     position: relative;
     overflow: hidden;
 }
@@ -201,8 +205,8 @@ h2 {
     padding: 6px 10px;
     font-size: 0.85rem;
     font-weight: bold;
-    border: 2px solid #fff;
-    border-bottom: none;
+    border: none;
+    border-top: 1px solid #fff;
     letter-spacing: 1px;
     text-shadow: none;
 }
@@ -212,29 +216,27 @@ h2 {
     grid-template-columns: 40px 1fr auto auto;
     gap: 10px;
     align-items: center;
-    background: #000080;
+    background: #000;
     padding: 12px;
-    border: 2px solid #555;
-    border-bottom: none;
+    border: none;
+    border-bottom: 1px solid #fff;
     transition: all 0.1s ease;
 }
 
 .daily-task-item:first-child {
-    border-top: 2px solid #fff;
+    border-top: none;
 }
 
 .daily-task-item:last-child {
-    border-bottom: 2px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .daily-task-item.planned {
-    background: #222;
-    border-color: #888;
+    background: #000;
 }
 
 .daily-task-item.completed {
-    background: #333;
-    border-color: #aaa;
+    background: #000;
 }
 
 .task-plan-check {
@@ -265,7 +267,7 @@ h2 {
 .timing-btn {
     padding: 6px 12px;
     background: #000;
-    border: 2px solid #555;
+    border: 1px solid #fff;
     color: #fff;
     cursor: pointer;
     font-size: 0.9rem;
@@ -275,13 +277,13 @@ h2 {
 }
 
 .timing-btn:hover:not(:disabled) {
-    border-color: #fff;
+    background: #000;
 }
 
 .timing-btn.active {
     background: #fff;
     color: #000;
-    border-color: #fff;
+    border: 1px solid #fff;
 }
 
 .timing-btn:disabled {
@@ -322,9 +324,9 @@ h2 {
 }
 
 .stamp-button {
-    background: #333;
+    background: #000;
     color: #fff;
-    border: 3px solid #fff;
+    border: 2px solid #fff;
     padding: 12px 30px;
     font-size: 1rem;
     font-weight: bold;
@@ -344,8 +346,9 @@ h2 {
 }
 
 .stamp-button:disabled {
-    background: #555;
+    background: #000;
     cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .stamp-message {
@@ -362,15 +365,15 @@ h2 {
 }
 
 .stamp-message.already {
-    color: #aaa;
+    color: #fff;
     text-shadow: none;
 }
 
 .stamped-display {
-    background: #222;
+    background: #000;
     color: #fff;
     padding: 25px;
-    border: 3px solid #fff;
+    border: 2px solid #fff;
     font-size: 1rem;
     letter-spacing: 1px;
     text-shadow: none;
@@ -393,10 +396,10 @@ h2 {
 .secondary-btn {
     display: block;
     padding: 15px 20px;
-    background: #000080;
+    background: #000;
     color: #fff;
-    border: 2px solid #fff;
-    border-bottom: none;
+    border: none;
+    border-bottom: 1px solid #fff;
     text-decoration: none;
     text-align: center;
     cursor: pointer;
@@ -408,12 +411,12 @@ h2 {
 }
 
 .secondary-btn:last-child {
-    border-bottom: 2px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .secondary-btn:hover {
     background: #fff;
-    color: #000080;
+    color: #000;
 }
 
 /* 履歴ページ */
@@ -424,28 +427,27 @@ h2 {
 }
 
 .history-item {
-    background: #000080;
+    background: #000;
     padding: 15px;
-    border: 2px solid #555;
-    border-bottom: none;
+    border: none;
+    border-bottom: 1px solid #fff;
 }
 
 .history-item:first-child {
-    border-top: 2px solid #fff;
+    border-top: none;
 }
 
 .history-item:last-child {
-    border-bottom: 2px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .history-item.title-changed {
-    background: #222;
-    border-color: #aaa;
+    background: #000;
 }
 
 .history-date {
     font-size: 0.9rem;
-    color: #aaa;
+    color: #fff;
     margin-bottom: 8px;
     letter-spacing: 1px;
 }
@@ -461,7 +463,7 @@ h2 {
     background: #000;
     color: #fff;
     padding: 4px 12px;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     font-weight: normal;
     font-size: 0.85rem;
     letter-spacing: 0;
@@ -509,7 +511,7 @@ h2 {
     flex: 1;
     padding: 12px;
     font-size: 1rem;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     background: #000;
     color: #fff;
     font-family: 'Courier New', monospace;
@@ -518,14 +520,14 @@ h2 {
 
 .task-input:focus {
     outline: none;
-    background: #000080;
+    background: #000;
 }
 
 .add-btn {
     padding: 12px 30px;
-    background: #333;
+    background: #000;
     color: #fff;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: normal;
@@ -552,7 +554,7 @@ h2 {
 .category-select {
     padding: 12px;
     font-size: 1rem;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     background: #000;
     color: #fff;
     font-family: 'Courier New', monospace;
@@ -561,7 +563,7 @@ h2 {
 
 .category-select:focus {
     outline: none;
-    background: #000080;
+    background: #000;
 }
 
 .category-group {
@@ -574,8 +576,8 @@ h2 {
     padding: 6px 10px;
     font-size: 0.85rem;
     font-weight: bold;
-    border: 2px solid #fff;
-    border-bottom: none;
+    border: none;
+    border-top: 1px solid #fff;
     letter-spacing: 1px;
     text-shadow: none;
     margin-bottom: 0;
@@ -586,24 +588,24 @@ h2 {
     grid-template-columns: 40px 1fr auto;
     gap: 15px;
     align-items: center;
-    background: #000080;
+    background: #000;
     padding: 15px;
-    border: 2px solid #555;
-    border-bottom: none;
+    border: none;
+    border-bottom: 1px solid #fff;
 }
 
 .manage-task-item:first-child {
-    border-top: 2px solid #fff;
+    border-top: none;
 }
 
 .manage-task-item:last-child {
-    border-bottom: 2px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .task-order {
     font-size: 0.9rem;
     font-weight: normal;
-    color: #aaa;
+    color: #fff;
     text-align: center;
 }
 
@@ -623,7 +625,7 @@ h2 {
     padding: 6px 12px;
     background: #000;
     color: #fff;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.1s;
@@ -642,9 +644,9 @@ h2 {
 
 .delete-btn {
     padding: 6px 12px;
-    background: #333;
+    background: #000;
     color: #fff;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     cursor: pointer;
     font-size: 0.75rem;
     transition: all 0.1s;
@@ -653,6 +655,23 @@ h2 {
 }
 
 .delete-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.edit-btn {
+    padding: 6px 12px;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.1s;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0;
+}
+
+.edit-btn:hover {
     background: #fff;
     color: #000;
 }
@@ -671,7 +690,48 @@ h2 {
 }
 
 .error-message {
-    color: #ff0000;
+    color: #fff;
+}
+
+/* 編集モーダル */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #000;
+    border: 2px solid #fff;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.edit-form label {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 /* レスポンシブ */

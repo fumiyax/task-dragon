@@ -26,7 +26,8 @@ export default async function handler(req, res) {
                         WHEN '学校' THEN 1
                         WHEN 'ヤマハ' THEN 2
                         WHEN 'BUDDY' THEN 3
-                        ELSE 4
+                        WHEN 'その他' THEN 4
+                        ELSE 5
                     END,
                     sort_order ASC,
                     id ASC

@@ -30,7 +30,7 @@ function displayTasks() {
     }
 
     // カテゴリごとにグループ化
-    const categories = ['学校', 'ヤマハ', 'BUDDY'];
+    const categories = ['学校', 'ヤマハ', 'BUDDY', 'その他'];
     let html = '';
 
     categories.forEach(category => {
@@ -46,6 +46,7 @@ function displayTasks() {
                     <div class="task-actions">
                         ${index > 0 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'up')">↑</button>` : '<span class="move-btn-placeholder"></span>'}
                         ${index < categoryTasks.length - 1 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'down')">↓</button>` : '<span class="move-btn-placeholder"></span>'}
+                        <button class="edit-btn" onclick="editTask(${task.id})">編集</button>
                         <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
                     </div>
                 </div>
@@ -83,6 +84,51 @@ async function addTask() {
         console.error('Error adding task:', error);
         alert('タスクの追加に失敗しました');
     }
+}
+
+// タスクを編集
+let editingTaskId = null;
+
+async function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    editingTaskId = id;
+    document.getElementById('editTaskName').value = task.name;
+    document.getElementById('editTaskCategory').value = task.category;
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+async function saveEdit() {
+    const name = document.getElementById('editTaskName').value.trim();
+    const category = document.getElementById('editTaskCategory').value;
+
+    if (!name) {
+        alert('タスク名を入力してください');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/tasks?id=${editingTaskId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, category })
+        });
+
+        if (!response.ok) throw new Error('Failed to update task');
+
+        document.getElementById('editModal').style.display = 'none';
+        editingTaskId = null;
+        await loadTasks();
+    } catch (error) {
+        console.error('Error updating task:', error);
+        alert('タスクの更新に失敗しました');
+    }
+}
+
+function cancelEdit() {
+    document.getElementById('editModal').style.display = 'none';
+    editingTaskId = null;
 }
 
 // タスクを削除
@@ -154,6 +200,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('newTaskName').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             addTask();
+        }
+    });
+
+    // 編集モーダルのボタン
+    document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+    document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+
+    // モーダル外クリックで閉じる
+    document.getElementById('editModal').addEventListener('click', (e) => {
+        if (e.target.id === 'editModal') {
+            cancelEdit();
         }
     });
 });

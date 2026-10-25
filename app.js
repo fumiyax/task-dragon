@@ -142,7 +142,7 @@ function displayTasks() {
     }
 
     // カテゴリごとにグループ化
-    const categories = ['学校', 'ヤマハ', 'BUDDY'];
+    const categories = ['学校', 'ヤマハ', 'BUDDY', 'その他'];
     let html = '';
 
     categories.forEach(category => {

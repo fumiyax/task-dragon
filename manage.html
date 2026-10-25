@@ -22,6 +22,7 @@
                         <option value="学校">学校</option>
                         <option value="ヤマハ">ヤマハ</option>
                         <option value="BUDDY">BUDDY</option>
+                        <option value="その他">その他</option>
                     </select>
                     <input type="text" id="newTaskName" placeholder="タスク名を入力" class="task-input">
                     <button id="addTaskBtn" class="add-btn">追加</button>
@@ -34,6 +35,29 @@
                 <div id="taskList" class="manage-task-list">
                     <div class="loading">読み込み中...</div>
                 </div>
+            </section>
+
+            <!-- 編集モーダル -->
+            <div id="editModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h2>タスク編集</h2>
+                    <div class="edit-form">
+                        <label>カテゴリ</label>
+                        <select id="editTaskCategory" class="category-select">
+                            <option value="学校">学校</option>
+                            <option value="ヤマハ">ヤマハ</option>
+                            <option value="BUDDY">BUDDY</option>
+                            <option value="その他">その他</option>
+                        </select>
+                        <label>タスク名</label>
+                        <input type="text" id="editTaskName" class="task-input">
+                        <div class="modal-buttons">
+                            <button id="saveEditBtn" class="add-btn">保存</button>
+                            <button id="cancelEditBtn" class="add-btn">キャンセル</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             </section>
         </main>
     </div>
