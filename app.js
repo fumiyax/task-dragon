@@ -200,14 +200,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // リセットボタン
-    const resetBtn = document.getElementById('resetBtn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', async () => {
-            if (confirm('すべてのデータをリセットしますか？')) {
-                // TODO: Add reset API endpoint if needed
-                alert('リセット機能は管理者に連絡してください');
-            }
-        });
-    }
 });
