@@ -18,13 +18,13 @@ export default async function handler(req, res) {
     }
 
     try {
-        const today = new Date().toISOString().split('T')[0];
+        const targetDate = req.query.date || new Date().toISOString().split('T')[0];
 
-        // 今日のタスクを取得
+        // 指定日のタスクを取得
         const taskResult = await sql`
             SELECT morning, afternoon, night
             FROM tasks
-            WHERE task_date = ${today}
+            WHERE task_date = ${targetDate}
         `;
 
         const todayTasks = taskResult[0] || {
@@ -45,11 +45,11 @@ export default async function handler(req, res) {
         const titleInfo = getTitle(currentLevel);
         const jobProgress = getJobProgress(currentLevel);
 
-        // 今日のスタンプ状況を取得
+        // 指定日のスタンプ状況を取得
         const stampResult = await sql`
             SELECT id
             FROM stamps
-            WHERE stamp_date = ${today}
+            WHERE stamp_date = ${targetDate}
         `;
 
         const hasStampToday = stampResult.length > 0;

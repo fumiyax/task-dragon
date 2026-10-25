@@ -10,14 +10,14 @@ class QuestManager {
             hasStampToday: false
         };
         this.tasks = [];
-        this.today = this.getToday();
+        this.currentDate = this.getToday();
     }
 
     async loadData() {
         try {
             const [charResponse, tasksResponse] = await Promise.all([
-                fetch(`${API_BASE}/api/data`),
-                fetch(`${API_BASE}/api/daily-tasks`)
+                fetch(`${API_BASE}/api/data?date=${this.currentDate}`),
+                fetch(`${API_BASE}/api/daily-tasks?date=${this.currentDate}`)
             ]);
 
             if (charResponse.ok) {
@@ -43,9 +43,26 @@ class QuestManager {
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     }
 
+    changeDate(days) {
+        const date = new Date(this.currentDate);
+        date.setDate(date.getDate() + days);
+        this.currentDate = date.toISOString().split('T')[0];
+    }
+
+    goToToday() {
+        this.currentDate = this.getToday();
+    }
+
+    formatDateJapanese() {
+        const date = new Date(this.currentDate);
+        const today = this.getToday();
+        const dateStr = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        return this.currentDate === today ? `${dateStr}（今日）` : dateStr;
+    }
+
     async updateTask(taskId, updates) {
         try {
-            const response = await fetch(`${API_BASE}/api/daily-tasks`, {
+            const response = await fetch(`${API_BASE}/api/daily-tasks?date=${this.currentDate}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ taskId, ...updates })
@@ -67,7 +84,7 @@ class QuestManager {
 
     async stamp() {
         try {
-            const response = await fetch(`${API_BASE}/api/stamp`, {
+            const response = await fetch(`${API_BASE}/api/stamp?date=${this.currentDate}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -82,6 +99,26 @@ class QuestManager {
             return result;
         } catch (error) {
             console.error('Error stamping:', error);
+            throw error;
+        }
+    }
+
+    async unstamp() {
+        try {
+            const response = await fetch(`${API_BASE}/api/stamp?date=${this.currentDate}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error);
+            }
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('Error unstamping:', error);
             throw error;
         }
     }
@@ -111,9 +148,7 @@ async function updateUI() {
     await manager.loadData();
 
     // 日付表示
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-    document.getElementById('currentDate').textContent = dateStr;
+    document.getElementById('currentDate').textContent = manager.formatDateJapanese();
 
     // キャラクター情報
     const char = manager.data.character;
@@ -223,9 +258,23 @@ function updateStampUI(hasStamp) {
         stampArea.innerHTML = `
             <div class="stamped-display">
                 <div class="stamped-icon">✅</div>
-                <div>今日はもうスタンプを押しました！</div>
+                <div>スタンプ承認済み</div>
             </div>
+            <button class="stamp-button" id="unstampButton">
+                ❌ 承認を解除
+            </button>
         `;
+
+        // 解除ボタンのイベントリスナーを追加
+        const unstampButton = document.getElementById('unstampButton');
+        if (unstampButton) {
+            unstampButton.addEventListener('click', () => {
+                document.getElementById('unstampPasswordModal').style.display = 'flex';
+                document.getElementById('unstampPasswordInput').value = '';
+                document.getElementById('unstampPasswordError').textContent = '';
+                document.getElementById('unstampPasswordInput').focus();
+            });
+        }
     } else {
         stampButton.disabled = false;
         messageEl.textContent = '';
@@ -312,6 +361,81 @@ document.addEventListener('DOMContentLoaded', async () => {
         passwordInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 submitPasswordBtn.click();
+            }
+        });
+    }
+
+    // 日付ナビゲーション
+    const prevDayBtn = document.getElementById('prevDayBtn');
+    if (prevDayBtn) {
+        prevDayBtn.addEventListener('click', async () => {
+            manager.changeDate(-1);
+            await updateUI();
+        });
+    }
+
+    const nextDayBtn = document.getElementById('nextDayBtn');
+    if (nextDayBtn) {
+        nextDayBtn.addEventListener('click', async () => {
+            manager.changeDate(1);
+            await updateUI();
+        });
+    }
+
+    const todayBtn = document.getElementById('todayBtn');
+    if (todayBtn) {
+        todayBtn.addEventListener('click', async () => {
+            manager.goToToday();
+            await updateUI();
+        });
+    }
+
+    // スタンプ解除用の合言葉確認
+    const submitUnstampPasswordBtn = document.getElementById('submitUnstampPasswordBtn');
+    if (submitUnstampPasswordBtn) {
+        submitUnstampPasswordBtn.addEventListener('click', async () => {
+            const password = document.getElementById('unstampPasswordInput').value;
+            const errorEl = document.getElementById('unstampPasswordError');
+
+            if (password === '238') {
+                document.getElementById('unstampPasswordModal').style.display = 'none';
+
+                try {
+                    await manager.unstamp();
+                    await updateUI();
+                } catch (error) {
+                    alert('スタンプの解除に失敗しました');
+                }
+            } else {
+                errorEl.textContent = '合言葉が違います';
+                errorEl.className = 'stamp-message';
+                document.getElementById('unstampPasswordInput').value = '';
+                document.getElementById('unstampPasswordInput').focus();
+            }
+        });
+    }
+
+    const cancelUnstampPasswordBtn = document.getElementById('cancelUnstampPasswordBtn');
+    if (cancelUnstampPasswordBtn) {
+        cancelUnstampPasswordBtn.addEventListener('click', () => {
+            document.getElementById('unstampPasswordModal').style.display = 'none';
+        });
+    }
+
+    const unstampPasswordModal = document.getElementById('unstampPasswordModal');
+    if (unstampPasswordModal) {
+        unstampPasswordModal.addEventListener('click', (e) => {
+            if (e.target.id === 'unstampPasswordModal') {
+                unstampPasswordModal.style.display = 'none';
+            }
+        });
+    }
+
+    const unstampPasswordInput = document.getElementById('unstampPasswordInput');
+    if (unstampPasswordInput) {
+        unstampPasswordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitUnstampPasswordBtn.click();
             }
         });
     }

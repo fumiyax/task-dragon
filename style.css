@@ -35,11 +35,38 @@ h1 {
     letter-spacing: 1px;
 }
 
+.date-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
 .date {
     font-size: 0.7rem;
     color: #fff;
     text-align: center;
-    margin-top: 4px;
+}
+
+.date-nav-btn {
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: all 0.1s;
+}
+
+.date-nav-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.date-nav-btn.today {
+    padding: 4px 12px;
 }
 
 .back-link {

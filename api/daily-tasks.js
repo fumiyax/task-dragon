@@ -12,10 +12,10 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    const targetDate = req.query.date || new Date().toISOString().split('T')[0];
 
     try {
-        // GET: 今日のタスク状態を取得
+        // GET: 指定日のタスク状態を取得
         if (req.method === 'GET') {
             // 全タスクマスタを取得
             const allTasks = await sql`
@@ -33,11 +33,11 @@ export default async function handler(req, res) {
                     id ASC
             `;
 
-            // 今日のタスク状態を取得
+            // 指定日のタスク状態を取得
             const dailyTasks = await sql`
                 SELECT task_master_id, is_planned, timing, is_completed
                 FROM daily_tasks
-                WHERE task_date = ${today}
+                WHERE task_date = ${targetDate}
             `;
 
             // マージ
@@ -67,7 +67,7 @@ export default async function handler(req, res) {
             // UPSERT
             await sql`
                 INSERT INTO daily_tasks (task_date, task_master_id, is_planned, timing, is_completed, updated_at)
-                VALUES (${today}, ${taskId}, ${isPlanned || false}, ${timing}, ${isCompleted || false}, CURRENT_TIMESTAMP)
+                VALUES (${targetDate}, ${taskId}, ${isPlanned || false}, ${timing}, ${isCompleted || false}, CURRENT_TIMESTAMP)
                 ON CONFLICT (task_date, task_master_id)
                 DO UPDATE SET
                     is_planned = ${isPlanned || false},

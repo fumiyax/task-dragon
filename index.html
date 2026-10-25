@@ -10,7 +10,12 @@
     <div class="container">
         <header>
             <h1>⚔️ レベルアップクエスト</h1>
-            <p class="date" id="currentDate"></p>
+            <div class="date-navigation">
+                <button class="date-nav-btn" id="prevDayBtn">←</button>
+                <span class="date" id="currentDate"></span>
+                <button class="date-nav-btn" id="nextDayBtn">→</button>
+                <button class="date-nav-btn today" id="todayBtn">今日</button>
+            </div>
         </header>
 
         <main>
@@ -64,7 +69,7 @@
         </main>
     </div>
 
-    <!-- 合言葉モーダル -->
+    <!-- 合言葉モーダル（承認用） -->
     <div id="passwordModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2>👑 王様の合言葉</h2>
@@ -81,6 +86,27 @@
                     <button id="cancelPasswordBtn" class="add-btn">キャンセル</button>
                 </div>
                 <p class="stamp-message" id="passwordError"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 合言葉モーダル（解除用） -->
+    <div id="unstampPasswordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>👑 王様の合言葉</h2>
+            <div class="password-form">
+                <input type="tel"
+                       id="unstampPasswordInput"
+                       placeholder="合言葉を入力"
+                       class="task-input"
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       maxlength="3">
+                <div class="modal-buttons">
+                    <button id="submitUnstampPasswordBtn" class="add-btn">確認</button>
+                    <button id="cancelUnstampPasswordBtn" class="add-btn">キャンセル</button>
+                </div>
+                <p class="stamp-message" id="unstampPasswordError"></p>
             </div>
         </div>
     </div>
