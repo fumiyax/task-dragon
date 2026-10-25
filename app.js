@@ -136,8 +136,10 @@ let manager;
 async function updateUI() {
     if (!manager) {
         manager = new TaskManager();
-        await manager.loadData();
     }
+
+    // 常に最新データを取得
+    await manager.loadData();
 
     // 日付表示
     const date = new Date();
