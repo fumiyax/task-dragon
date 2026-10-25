@@ -148,7 +148,7 @@ function updateStampUI(hasStamp) {
         stampArea.innerHTML = `
             <div class="stamped-display">
                 <div class="stamped-icon">✅</div>
-                <div>きょうはもうスタンプをおしました！</div>
+                <div>今日はもうスタンプを押しました！</div>
             </div>
         `;
     } else {
@@ -189,10 +189,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch (error) {
                 const messageEl = document.getElementById('stampMessage');
                 if (error.message === 'Already stamped today') {
-                    messageEl.textContent = 'きょうはもうスタンプをおしました';
+                    messageEl.textContent = '今日はもうスタンプを押しました';
                     messageEl.className = 'stamp-message already';
                 } else {
-                    messageEl.textContent = 'エラーがはっせいしました';
+                    messageEl.textContent = 'エラーが発生しました';
                     messageEl.className = 'stamp-message';
                 }
                 stampButton.disabled = false;

@@ -12,7 +12,7 @@ async function loadHistory() {
     } catch (error) {
         console.error('Error loading history:', error);
         document.getElementById('historyList').innerHTML =
-            '<div class="error-message">データのよみこみにしっぱいしました</div>';
+            '<div class="error-message">データの読み込みに失敗しました</div>';
     }
 }
 
