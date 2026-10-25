@@ -6,10 +6,7 @@
 
 body {
     font-family: 'Courier New', 'MS Gothic', monospace;
-    background: #000080;
-    background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px),
-        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px);
+    background: #000;
     min-height: 100vh;
     padding: 20px;
     image-rendering: pixelated;
@@ -21,12 +18,11 @@ body {
 }
 
 header {
-    background: #0000aa;
+    background: #000080;
     border: 4px solid #fff;
     border-radius: 0;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 0 0 4px #000;
     position: relative;
 }
 
@@ -53,20 +49,19 @@ h1 {
     text-decoration: none;
     font-size: 1rem;
     padding: 8px 16px;
-    background: #0000aa;
+    background: #000080;
     border: 2px solid #fff;
     transition: all 0.1s;
 }
 
 .back-link:hover {
     background: #fff;
-    color: #0000aa;
+    color: #000080;
 }
 
 main {
-    background: #0000aa;
+    background: #000080;
     border: 4px solid #fff;
-    box-shadow: 0 0 0 4px #000;
     padding: 0;
 }
 
@@ -90,7 +85,7 @@ h2 {
 
 /* キャラクター情報 */
 .character-section {
-    background: #000080;
+    background: #000;
 }
 
 .character-info {
@@ -99,7 +94,7 @@ h2 {
     justify-content: space-between;
     margin-bottom: 15px;
     padding: 15px;
-    background: #0000aa;
+    background: #000080;
     border: 2px solid #fff;
 }
 
@@ -141,7 +136,7 @@ h2 {
 
 .job-progress {
     padding: 15px;
-    background: #0000aa;
+    background: #000080;
     border: 2px solid #fff;
 }
 
@@ -187,7 +182,7 @@ h2 {
 
 /* 日次タスクリスト */
 .daily-tasks-section {
-    background: #000080;
+    background: #000;
 }
 
 .daily-task-list {
@@ -201,7 +196,7 @@ h2 {
     grid-template-columns: 40px 1fr auto auto;
     gap: 10px;
     align-items: center;
-    background: #0000aa;
+    background: #000080;
     padding: 12px;
     border: 2px solid #555;
     border-bottom: none;
@@ -303,7 +298,7 @@ h2 {
 /* スタンプセクション */
 .stamp-section {
     text-align: center;
-    background: #000080;
+    background: #000;
 }
 
 #stampArea {
@@ -383,7 +378,7 @@ h2 {
 .secondary-btn {
     display: block;
     padding: 15px 20px;
-    background: #0000aa;
+    background: #000080;
     color: #fff;
     border: 2px solid #fff;
     border-bottom: none;
@@ -403,7 +398,7 @@ h2 {
 
 .secondary-btn:hover {
     background: #fff;
-    color: #0000aa;
+    color: #000080;
 }
 
 /* 履歴ページ */
@@ -414,7 +409,7 @@ h2 {
 }
 
 .history-item {
-    background: #0000aa;
+    background: #000080;
     padding: 15px;
     border: 2px solid #555;
     border-bottom: none;
@@ -486,7 +481,7 @@ h2 {
 
 /* タスク管理画面 */
 .add-task-section {
-    background: #000080;
+    background: #000;
 }
 
 .add-task-form {
@@ -507,7 +502,7 @@ h2 {
 
 .task-input:focus {
     outline: none;
-    background: #0000aa;
+    background: #000080;
 }
 
 .add-btn {
@@ -528,7 +523,7 @@ h2 {
 }
 
 .task-list-section {
-    background: #000080;
+    background: #000;
 }
 
 .manage-task-list {
@@ -542,7 +537,7 @@ h2 {
     grid-template-columns: 40px 1fr auto;
     gap: 15px;
     align-items: center;
-    background: #0000aa;
+    background: #000080;
     padding: 15px;
     border: 2px solid #555;
     border-bottom: none;
