@@ -19,9 +19,17 @@ export default async function handler(req, res) {
         if (req.method === 'GET') {
             // 全タスクマスタを取得
             const allTasks = await sql`
-                SELECT id, name, sort_order
+                SELECT id, name, category, sort_order
                 FROM task_master
-                ORDER BY sort_order ASC, id ASC
+                ORDER BY
+                    CASE category
+                        WHEN '学校' THEN 1
+                        WHEN 'ヤマハ' THEN 2
+                        WHEN 'BUDDY' THEN 3
+                        ELSE 4
+                    END,
+                    sort_order ASC,
+                    id ASC
             `;
 
             // 今日のタスク状態を取得
@@ -37,6 +45,7 @@ export default async function handler(req, res) {
                 return {
                     id: task.id,
                     name: task.name,
+                    category: task.category,
                     isPlanned: daily?.is_planned || false,
                     timing: daily?.timing || null,
                     isCompleted: daily?.is_completed || false

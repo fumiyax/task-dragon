@@ -16,9 +16,17 @@ export default async function handler(req, res) {
         // GET: タスクマスタ一覧取得
         if (req.method === 'GET') {
             const tasks = await sql`
-                SELECT id, name, sort_order
+                SELECT id, name, category, sort_order
                 FROM task_master
-                ORDER BY sort_order ASC, id ASC
+                ORDER BY
+                    CASE category
+                        WHEN '学校' THEN 1
+                        WHEN 'ヤマハ' THEN 2
+                        WHEN 'BUDDY' THEN 3
+                        ELSE 4
+                    END,
+                    sort_order ASC,
+                    id ASC
             `;
 
             return res.status(200).json({ tasks });
@@ -26,24 +34,27 @@ export default async function handler(req, res) {
 
         // POST: タスク追加
         if (req.method === 'POST') {
-            const { name } = req.body;
+            const { name, category } = req.body;
 
             if (!name || name.trim() === '') {
                 return res.status(400).json({ error: 'Task name is required' });
             }
 
-            // 最大のsort_orderを取得
+            const validCategory = category || '学校';
+
+            // カテゴリ内での最大のsort_orderを取得
             const maxOrder = await sql`
                 SELECT COALESCE(MAX(sort_order), -1) as max_order
                 FROM task_master
+                WHERE category = ${validCategory}
             `;
 
             const newOrder = maxOrder[0].max_order + 1;
 
             const result = await sql`
-                INSERT INTO task_master (name, sort_order)
-                VALUES (${name.trim()}, ${newOrder})
-                RETURNING id, name, sort_order
+                INSERT INTO task_master (name, category, sort_order)
+                VALUES (${name.trim()}, ${validCategory}, ${newOrder})
+                RETURNING id, name, category, sort_order
             `;
 
             return res.status(201).json({ task: result[0] });
@@ -68,7 +79,7 @@ export default async function handler(req, res) {
         // PUT: タスク更新（並び替え）
         if (req.method === 'PUT') {
             const { id } = req.query;
-            const { name, sort_order } = req.body;
+            const { name, category, sort_order } = req.body;
 
             if (!id) {
                 return res.status(400).json({ error: 'Task ID is required' });
@@ -78,6 +89,14 @@ export default async function handler(req, res) {
                 await sql`
                     UPDATE task_master
                     SET name = ${name.trim()}
+                    WHERE id = ${id}
+                `;
+            }
+
+            if (category !== undefined) {
+                await sql`
+                    UPDATE task_master
+                    SET category = ${category}
                     WHERE id = ${id}
                 `;
             }

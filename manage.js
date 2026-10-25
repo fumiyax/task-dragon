@@ -29,23 +29,39 @@ function displayTasks() {
         return;
     }
 
-    listEl.innerHTML = tasks.map((task, index) => `
-        <div class="manage-task-item" data-id="${task.id}">
-            <div class="task-order">${index + 1}</div>
-            <div class="task-name-display">${task.name}</div>
-            <div class="task-actions">
-                ${index > 0 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'up')">↑</button>` : '<span class="move-btn-placeholder"></span>'}
-                ${index < tasks.length - 1 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'down')">↓</button>` : '<span class="move-btn-placeholder"></span>'}
-                <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
-            </div>
-        </div>
-    `).join('');
+    // カテゴリごとにグループ化
+    const categories = ['学校', 'ヤマハ', 'BUDDY'];
+    let html = '';
+
+    categories.forEach(category => {
+        const categoryTasks = tasks.filter(t => t.category === category);
+        if (categoryTasks.length === 0) return;
+
+        html += `<div class="category-group">
+            <h3 class="category-title">${category}</h3>
+            ${categoryTasks.map((task, index) => `
+                <div class="manage-task-item" data-id="${task.id}">
+                    <div class="task-order">${index + 1}</div>
+                    <div class="task-name-display">${task.name}</div>
+                    <div class="task-actions">
+                        ${index > 0 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'up')">↑</button>` : '<span class="move-btn-placeholder"></span>'}
+                        ${index < categoryTasks.length - 1 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'down')">↓</button>` : '<span class="move-btn-placeholder"></span>'}
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>`;
+    });
+
+    listEl.innerHTML = html;
 }
 
 // タスクを追加
 async function addTask() {
     const nameInput = document.getElementById('newTaskName');
+    const categorySelect = document.getElementById('newTaskCategory');
     const name = nameInput.value.trim();
+    const category = categorySelect.value;
 
     if (!name) {
         alert('タスク名を入力してください');
@@ -56,7 +72,7 @@ async function addTask() {
         const response = await fetch(`${API_BASE}/api/tasks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name })
+            body: JSON.stringify({ name, category })
         });
 
         if (!response.ok) throw new Error('Failed to add task');
@@ -91,15 +107,20 @@ async function deleteTask(id) {
 
 // タスクを移動
 async function moveTask(id, direction) {
-    const index = tasks.findIndex(t => t.id === id);
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    // 同じカテゴリ内でのタスクのみ取得
+    const categoryTasks = tasks.filter(t => t.category === task.category);
+    const index = categoryTasks.findIndex(t => t.id === id);
     if (index === -1) return;
 
     const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= tasks.length) return;
+    if (newIndex < 0 || newIndex >= categoryTasks.length) return;
 
     // ソート順を入れ替え
-    const task1 = tasks[index];
-    const task2 = tasks[newIndex];
+    const task1 = categoryTasks[index];
+    const task2 = categoryTasks[newIndex];
 
     try {
         await Promise.all([

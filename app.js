@@ -141,7 +141,17 @@ function displayTasks() {
         return;
     }
 
-    listEl.innerHTML = manager.tasks.map(task => `
+    // カテゴリごとにグループ化
+    const categories = ['学校', 'ヤマハ', 'BUDDY'];
+    let html = '';
+
+    categories.forEach(category => {
+        const categoryTasks = manager.tasks.filter(t => t.category === category);
+        if (categoryTasks.length === 0) return;
+
+        html += `<div class="category-section">
+            <h3 class="category-header">${category}</h3>
+            ${categoryTasks.map(task => `
         <div class="daily-task-item ${task.isPlanned ? 'planned' : ''} ${task.isCompleted ? 'completed' : ''}" data-id="${task.id}">
             <div class="task-plan-check">
                 <input type="checkbox"
@@ -170,7 +180,11 @@ function displayTasks() {
                 <span class="complete-label">完了</span>
             </div>
         </div>
-    `).join('');
+    `).join('')}
+        </div>`;
+    });
+
+    listEl.innerHTML = html;
 
     // サマリー表示
     const planned = manager.tasks.filter(t => t.isPlanned).length;
