@@ -197,6 +197,12 @@ h2 {
 
 .category-section {
     margin-bottom: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #fff;
+}
+
+.category-section:last-child {
+    border-bottom: none;
 }
 
 .category-header {
@@ -206,7 +212,6 @@ h2 {
     font-size: 0.85rem;
     font-weight: bold;
     border: none;
-    border-top: 1px solid #fff;
     letter-spacing: 1px;
     text-shadow: none;
 }
@@ -219,16 +224,7 @@ h2 {
     background: #000;
     padding: 12px;
     border: none;
-    border-bottom: 1px solid #fff;
     transition: all 0.1s ease;
-}
-
-.daily-task-item:first-child {
-    border-top: none;
-}
-
-.daily-task-item:last-child {
-    border-bottom: 1px solid #fff;
 }
 
 .daily-task-item.planned {
@@ -568,6 +564,12 @@ h2 {
 
 .category-group {
     margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #fff;
+}
+
+.category-group:last-child {
+    border-bottom: none;
 }
 
 .category-title {
@@ -577,7 +579,6 @@ h2 {
     font-size: 0.85rem;
     font-weight: bold;
     border: none;
-    border-top: 1px solid #fff;
     letter-spacing: 1px;
     text-shadow: none;
     margin-bottom: 0;
@@ -591,15 +592,6 @@ h2 {
     background: #000;
     padding: 15px;
     border: none;
-    border-bottom: 1px solid #fff;
-}
-
-.manage-task-item:first-child {
-    border-top: none;
-}
-
-.manage-task-item:last-child {
-    border-bottom: 1px solid #fff;
 }
 
 .task-order {
