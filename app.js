@@ -251,8 +251,6 @@ async function toggleComplete(taskId, isCompleted) {
 
 function updateStampUI(hasStamp) {
     const stampArea = document.getElementById('stampArea');
-    const stampButton = document.getElementById('stampButton');
-    const messageEl = document.getElementById('stampMessage');
 
     if (hasStamp) {
         stampArea.innerHTML = `
@@ -276,9 +274,24 @@ function updateStampUI(hasStamp) {
             });
         }
     } else {
-        stampButton.disabled = false;
-        messageEl.textContent = '';
-        messageEl.className = 'stamp-message';
+        // 元のボタンとメッセージ要素を復元
+        stampArea.innerHTML = `
+            <button class="stamp-button" id="stampButton">
+                ✨ よくできました！ ✨
+            </button>
+            <p class="stamp-message" id="stampMessage"></p>
+        `;
+
+        // スタンプボタンのイベントリスナーを再設定
+        const stampButton = document.getElementById('stampButton');
+        if (stampButton) {
+            stampButton.addEventListener('click', () => {
+                document.getElementById('passwordModal').style.display = 'flex';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordError').textContent = '';
+                document.getElementById('passwordInput').focus();
+            });
+        }
     }
 }
 
@@ -289,7 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 初期表示
     await updateUI();
 
-    // スタンプボタン
+    // スタンプボタン（初回のみ。以降はupdateStampUIで設定）
     const stampButton = document.getElementById('stampButton');
     if (stampButton) {
         stampButton.addEventListener('click', () => {
