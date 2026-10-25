@@ -403,8 +403,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     await manager.unstamp();
                     await updateUI();
+
+                    // 成功メッセージを表示
+                    const messageEl = document.getElementById('stampMessage');
+                    if (messageEl) {
+                        messageEl.textContent = 'スタンプを解除しました';
+                        messageEl.className = 'stamp-message success';
+                        setTimeout(() => {
+                            messageEl.textContent = '';
+                        }, 2000);
+                    }
                 } catch (error) {
-                    alert('スタンプの解除に失敗しました');
+                    console.error('Unstamp error:', error);
+                    alert(`スタンプの解除に失敗しました: ${error.message}`);
                 }
             } else {
                 errorEl.textContent = '合言葉が違います';
