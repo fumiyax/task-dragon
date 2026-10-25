@@ -25,7 +25,7 @@ export default async function handler(req, res) {
             WHERE task_date = ${today}
         `;
 
-        const todayTasks = taskResult.rows[0] || {
+        const todayTasks = taskResult[0] || {
             morning: false,
             afternoon: false,
             night: false
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
             LIMIT 1
         `;
 
-        const currentEgg = eggResult.rows[0] || {
+        const currentEgg = eggResult[0] || {
             start_date: today,
             check_count: 0
         };
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
                 startDate: currentEgg.start_date,
                 checkCount: currentEgg.check_count
             },
-            dragons: dragonsResult.rows.map(d => ({
+            dragons: dragonsResult.map(d => ({
                 icon: d.icon,
                 name: d.name,
                 color: d.color,

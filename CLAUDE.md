@@ -38,3 +38,19 @@
 - Neon DB を使用
 - テーブル: tasks, current_egg, dragons
 - 環境変数はVercelの環境変数に設定
+
+## よくあるトラブル
+
+### VercelからGitHubリポジトリが見えない
+
+**原因**: VercelのGitHub App設定でリポジトリへのアクセス権限が許可されていない
+
+**解決策**:
+1. https://github.com/settings/installations を開く
+2. 「Vercel」を探して「Configure」をクリック
+3. Repository access で:
+   - 「All repositories」を選択、または
+   - 「Only select repositories」→「Select repositories」で該当リポジトリを追加
+4. 「Save」をクリック
+
+これでVercelのImport Project画面からリポジトリが見えるようになる

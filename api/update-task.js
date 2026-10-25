@@ -24,15 +24,35 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Invalid task type' });
         }
 
-        // タスクを更新（なければ挿入）
-        await sql`
-            INSERT INTO tasks (task_date, ${sql(taskType)}, updated_at)
-            VALUES (${today}, ${checked}, CURRENT_TIMESTAMP)
-            ON CONFLICT (task_date)
-            DO UPDATE SET
-                ${sql(taskType)} = ${checked},
-                updated_at = CURRENT_TIMESTAMP
-        `;
+        // タスクを更新（なければ挿入）- 動的カラム名のためif文で分岐
+        if (taskType === 'morning') {
+            await sql`
+                INSERT INTO tasks (task_date, morning, updated_at)
+                VALUES (${today}, ${checked}, CURRENT_TIMESTAMP)
+                ON CONFLICT (task_date)
+                DO UPDATE SET
+                    morning = ${checked},
+                    updated_at = CURRENT_TIMESTAMP
+            `;
+        } else if (taskType === 'afternoon') {
+            await sql`
+                INSERT INTO tasks (task_date, afternoon, updated_at)
+                VALUES (${today}, ${checked}, CURRENT_TIMESTAMP)
+                ON CONFLICT (task_date)
+                DO UPDATE SET
+                    afternoon = ${checked},
+                    updated_at = CURRENT_TIMESTAMP
+            `;
+        } else if (taskType === 'night') {
+            await sql`
+                INSERT INTO tasks (task_date, night, updated_at)
+                VALUES (${today}, ${checked}, CURRENT_TIMESTAMP)
+                ON CONFLICT (task_date)
+                DO UPDATE SET
+                    night = ${checked},
+                    updated_at = CURRENT_TIMESTAMP
+            `;
+        }
 
         // 7日間のチェック数を計算
         const sevenDaysAgo = new Date();
@@ -48,7 +68,7 @@ export default async function handler(req, res) {
             WHERE task_date >= ${sevenDaysAgoStr} AND task_date <= ${today}
         `;
 
-        const totalChecks = parseInt(countResult.rows[0]?.total_checks || 0);
+        const totalChecks = parseInt(countResult[0]?.total_checks || 0);
 
         // 卵の状態を更新
         await sql`
@@ -61,7 +81,7 @@ export default async function handler(req, res) {
         const eggResult = await sql`
             SELECT start_date FROM current_egg ORDER BY id DESC LIMIT 1
         `;
-        const startDate = new Date(eggResult.rows[0]?.start_date || today);
+        const startDate = new Date(eggResult[0]?.start_date || today);
         const daysDiff = Math.floor((new Date(today) - startDate) / (1000 * 60 * 60 * 24));
 
         // 孵化判定
