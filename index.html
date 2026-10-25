@@ -36,35 +36,13 @@
                 </div>
             </section>
 
-            <!-- 今日のタスク -->
-            <section class="tasks-section">
+            <!-- タスク一覧 -->
+            <section class="daily-tasks-section">
                 <h2>今日のタスク</h2>
-                <div class="task-list">
-                    <div class="task-item">
-                        <label class="task-label">
-                            <input type="checkbox" id="morning" class="task-checkbox">
-                            <span class="task-icon">🌅</span>
-                            <span class="task-name">朝</span>
-                        </label>
-                    </div>
-                    <div class="task-item">
-                        <label class="task-label">
-                            <input type="checkbox" id="afternoon" class="task-checkbox">
-                            <span class="task-icon">☀️</span>
-                            <span class="task-name">昼</span>
-                        </label>
-                    </div>
-                    <div class="task-item">
-                        <label class="task-label">
-                            <input type="checkbox" id="night" class="task-checkbox">
-                            <span class="task-icon">🌙</span>
-                            <span class="task-name">夜</span>
-                        </label>
-                    </div>
+                <div id="taskList" class="daily-task-list">
+                    <div class="loading">読み込み中...</div>
                 </div>
-                <div class="today-count">
-                    今日: <span id="todayCount">0</span> / 3
-                </div>
+                <div class="task-summary" id="taskSummary"></div>
             </section>
 
             <!-- 王様の承認 -->
@@ -81,6 +59,7 @@
             <!-- ボタン -->
             <div class="button-group">
                 <a href="history.html" class="secondary-btn">📜 スタンプ履歴</a>
+                <a href="manage.html" class="secondary-btn">⚙️ タスク管理</a>
             </div>
         </main>
     </div>

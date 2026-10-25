@@ -1,0 +1,138 @@
+// タスク管理ページ
+
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
+let tasks = [];
+
+// タスク一覧を読み込み
+async function loadTasks() {
+    try {
+        const response = await fetch(`${API_BASE}/api/tasks`);
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+
+        const data = await response.json();
+        tasks = data.tasks;
+        displayTasks();
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        document.getElementById('taskList').innerHTML =
+            '<div class="error-message">タスクの読み込みに失敗しました</div>';
+    }
+}
+
+// タスクを表示
+function displayTasks() {
+    const listEl = document.getElementById('taskList');
+
+    if (!tasks || tasks.length === 0) {
+        listEl.innerHTML = '<div class="empty-message">タスクがありません</div>';
+        return;
+    }
+
+    listEl.innerHTML = tasks.map((task, index) => `
+        <div class="manage-task-item" data-id="${task.id}">
+            <div class="task-order">${index + 1}</div>
+            <div class="task-name-display">${task.name}</div>
+            <div class="task-actions">
+                ${index > 0 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'up')">↑</button>` : '<span class="move-btn-placeholder"></span>'}
+                ${index < tasks.length - 1 ? `<button class="move-btn" onclick="moveTask(${task.id}, 'down')">↓</button>` : '<span class="move-btn-placeholder"></span>'}
+                <button class="delete-btn" onclick="deleteTask(${task.id})">削除</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// タスクを追加
+async function addTask() {
+    const nameInput = document.getElementById('newTaskName');
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        alert('タスク名を入力してください');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/tasks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+
+        if (!response.ok) throw new Error('Failed to add task');
+
+        nameInput.value = '';
+        await loadTasks();
+    } catch (error) {
+        console.error('Error adding task:', error);
+        alert('タスクの追加に失敗しました');
+    }
+}
+
+// タスクを削除
+async function deleteTask(id) {
+    if (!confirm('このタスクを削除しますか？')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/tasks?id=${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Failed to delete task');
+
+        await loadTasks();
+    } catch (error) {
+        console.error('Error deleting task:', error);
+        alert('タスクの削除に失敗しました');
+    }
+}
+
+// タスクを移動
+async function moveTask(id, direction) {
+    const index = tasks.findIndex(t => t.id === id);
+    if (index === -1) return;
+
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= tasks.length) return;
+
+    // ソート順を入れ替え
+    const task1 = tasks[index];
+    const task2 = tasks[newIndex];
+
+    try {
+        await Promise.all([
+            fetch(`${API_BASE}/api/tasks?id=${task1.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sort_order: task2.sort_order })
+            }),
+            fetch(`${API_BASE}/api/tasks?id=${task2.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sort_order: task1.sort_order })
+            })
+        ]);
+
+        await loadTasks();
+    } catch (error) {
+        console.error('Error moving task:', error);
+        alert('タスクの移動に失敗しました');
+    }
+}
+
+// イベントリスナー
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+
+    // 追加ボタン
+    document.getElementById('addTaskBtn').addEventListener('click', addTask);
+
+    // Enterキーで追加
+    document.getElementById('newTaskName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addTask();
+        }
+    });
+});

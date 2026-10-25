@@ -395,6 +395,210 @@ h2 {
     color: #dc3545;
 }
 
+/* 日次タスクリスト */
+.daily-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.daily-task-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.daily-task-item.planned {
+    background: #fff8dc;
+    border-left: 4px solid #ffc107;
+}
+
+.daily-task-item.completed {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+}
+
+.task-plan-check {
+    display: flex;
+    align-items: center;
+}
+
+.plan-checkbox, .complete-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.task-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.task-timing {
+    display: flex;
+    gap: 4px;
+}
+
+.timing-btn {
+    padding: 6px 12px;
+    background: #e9ecef;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.timing-btn:hover:not(:disabled) {
+    background: #dee2e6;
+}
+
+.timing-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.timing-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.task-complete-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.complete-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.task-summary {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* タスク管理画面 */
+.add-task-section {
+    margin-bottom: 30px;
+}
+
+.add-task-form {
+    display: flex;
+    gap: 10px;
+}
+
+.task-input {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+.task-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.add-btn {
+    padding: 12px 30px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s;
+    font-family: inherit;
+}
+
+.add-btn:hover {
+    background: #5568d3;
+}
+
+.manage-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.manage-task-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 15px;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.task-order {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #999;
+    min-width: 30px;
+}
+
+.task-name-display {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.task-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.move-btn {
+    padding: 6px 12px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+    font-family: inherit;
+}
+
+.move-btn:hover {
+    background: #5a6268;
+}
+
+.move-btn-placeholder {
+    width: 38px;
+    display: inline-block;
+}
+
+.delete-btn {
+    padding: 6px 12px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+    font-family: inherit;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+}
+
 /* レスポンシブ */
 @media (max-width: 600px) {
     h1 {
@@ -409,16 +613,23 @@ h2 {
         font-size: 1.5rem;
     }
 
-    .task-icon {
-        font-size: 1.5rem;
-    }
-
-    .task-name {
-        font-size: 1.2rem;
-    }
-
     .stamp-button {
         font-size: 1.2rem;
         padding: 15px 30px;
+    }
+
+    .daily-task-item {
+        grid-template-columns: auto 1fr;
+        gap: 8px;
+    }
+
+    .task-timing {
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
+
+    .task-complete-check {
+        grid-column: 1 / -1;
+        justify-content: center;
     }
 }

@@ -6,22 +6,35 @@ const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:30
 class QuestManager {
     constructor() {
         this.data = {
-            todayTasks: { morning: false, afternoon: false, night: false },
             character: { level: 1, title: '見習い剣士', job: '剣士', icon: '⚔️', jobLevel: 1, jobProgress: { current: 1, max: 100, percentage: 1 } },
             hasStampToday: false
         };
+        this.tasks = [];
         this.today = this.getToday();
     }
 
     async loadData() {
         try {
-            const response = await fetch(`${API_BASE}/api/data`);
-            if (!response.ok) throw new Error('Failed to fetch data');
-            this.data = await response.json();
-            return this.data;
+            const [charResponse, tasksResponse] = await Promise.all([
+                fetch(`${API_BASE}/api/data`),
+                fetch(`${API_BASE}/api/daily-tasks`)
+            ]);
+
+            if (charResponse.ok) {
+                const charData = await charResponse.json();
+                this.data.character = charData.character;
+                this.data.hasStampToday = charData.hasStampToday;
+            }
+
+            if (tasksResponse.ok) {
+                const tasksData = await tasksResponse.json();
+                this.tasks = tasksData.tasks;
+            }
+
+            return { ...this.data, tasks: this.tasks };
         } catch (error) {
             console.error('Error loading data:', error);
-            return this.data;
+            return { ...this.data, tasks: this.tasks };
         }
     }
 
@@ -30,18 +43,21 @@ class QuestManager {
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     }
 
-    async setTask(taskType, checked) {
+    async updateTask(taskId, updates) {
         try {
-            const response = await fetch(`${API_BASE}/api/update-task`, {
+            const response = await fetch(`${API_BASE}/api/daily-tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ taskType, checked })
+                body: JSON.stringify({ taskId, ...updates })
             });
 
             if (!response.ok) throw new Error('Failed to update task');
 
             // ローカルデータを更新
-            this.data.todayTasks[taskType] = checked;
+            const task = this.tasks.find(t => t.id === taskId);
+            if (task) {
+                Object.assign(task, updates);
+            }
 
             return await response.json();
         } catch (error) {
@@ -71,9 +87,7 @@ class QuestManager {
     }
 
     showLevelUpAnimation(result) {
-        const stampArea = document.getElementById('stampArea');
         const messageEl = document.getElementById('stampMessage');
-
         messageEl.textContent = `${result.titleBefore} → ${result.titleAfter} レベルアップ！🎉`;
         messageEl.className = 'stamp-message success';
 
@@ -110,33 +124,80 @@ async function updateUI() {
     document.getElementById('jobLevel').textContent = char.jobLevel;
     document.getElementById('jobProgressFill').style.width = `${char.jobProgress.percentage}%`;
 
-    // タスクの状態を復元
-    const todayTasks = manager.data.todayTasks;
-    document.getElementById('morning').checked = todayTasks.morning;
-    document.getElementById('afternoon').checked = todayTasks.afternoon;
-    document.getElementById('night').checked = todayTasks.night;
-
-    // チェック状態に応じてスタイルを更新
-    updateTaskStyle('morning', todayTasks.morning);
-    updateTaskStyle('afternoon', todayTasks.afternoon);
-    updateTaskStyle('night', todayTasks.night);
-
-    // 今日のカウント
-    const todayCount = [todayTasks.morning, todayTasks.afternoon, todayTasks.night].filter(Boolean).length;
-    document.getElementById('todayCount').textContent = todayCount;
+    // タスク一覧を表示
+    displayTasks();
 
     // スタンプ状態
     updateStampUI(manager.data.hasStampToday);
 }
 
-function updateTaskStyle(taskId, checked) {
-    const checkbox = document.getElementById(taskId);
-    const taskItem = checkbox.closest('.task-item');
-    if (checked) {
-        taskItem.classList.add('checked');
-    } else {
-        taskItem.classList.remove('checked');
+function displayTasks() {
+    const listEl = document.getElementById('taskList');
+    const summaryEl = document.getElementById('taskSummary');
+
+    if (!manager.tasks || manager.tasks.length === 0) {
+        listEl.innerHTML = '<div class="empty-message">タスクがありません<br><a href="manage.html">タスク管理</a>からタスクを追加してください</div>';
+        summaryEl.textContent = '';
+        return;
     }
+
+    listEl.innerHTML = manager.tasks.map(task => `
+        <div class="daily-task-item ${task.isPlanned ? 'planned' : ''} ${task.isCompleted ? 'completed' : ''}" data-id="${task.id}">
+            <div class="task-plan-check">
+                <input type="checkbox"
+                       class="plan-checkbox"
+                       ${task.isPlanned ? 'checked' : ''}
+                       onchange="togglePlan(${task.id}, this.checked)">
+            </div>
+            <div class="task-name">${task.name}</div>
+            <div class="task-timing">
+                <button class="timing-btn ${task.timing === 'morning' ? 'active' : ''}"
+                        onclick="setTiming(${task.id}, 'morning')"
+                        ${!task.isPlanned ? 'disabled' : ''}>朝</button>
+                <button class="timing-btn ${task.timing === 'afternoon' ? 'active' : ''}"
+                        onclick="setTiming(${task.id}, 'afternoon')"
+                        ${!task.isPlanned ? 'disabled' : ''}>昼</button>
+                <button class="timing-btn ${task.timing === 'night' ? 'active' : ''}"
+                        onclick="setTiming(${task.id}, 'night')"
+                        ${!task.isPlanned ? 'disabled' : ''}>夜</button>
+            </div>
+            <div class="task-complete-check">
+                <input type="checkbox"
+                       class="complete-checkbox"
+                       ${task.isCompleted ? 'checked' : ''}
+                       onchange="toggleComplete(${task.id}, this.checked)"
+                       ${!task.isPlanned ? 'disabled' : ''}>
+                <span class="complete-label">完了</span>
+            </div>
+        </div>
+    `).join('');
+
+    // サマリー表示
+    const planned = manager.tasks.filter(t => t.isPlanned).length;
+    const completed = manager.tasks.filter(t => t.isCompleted).length;
+    summaryEl.innerHTML = `計画: ${planned} / 完了: ${completed}`;
+}
+
+async function togglePlan(taskId, isPlanned) {
+    const task = manager.tasks.find(t => t.id === taskId);
+    await manager.updateTask(taskId, {
+        isPlanned,
+        timing: isPlanned ? (task.timing || null) : null,
+        isCompleted: isPlanned ? task.isCompleted : false
+    });
+    displayTasks();
+}
+
+async function setTiming(taskId, timing) {
+    const task = manager.tasks.find(t => t.id === taskId);
+    const newTiming = task.timing === timing ? null : timing;
+    await manager.updateTask(taskId, { timing: newTiming });
+    displayTasks();
+}
+
+async function toggleComplete(taskId, isCompleted) {
+    await manager.updateTask(taskId, { isCompleted });
+    displayTasks();
 }
 
 function updateStampUI(hasStamp) {
@@ -165,19 +226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 初期表示
     await updateUI();
 
-    // タスクチェックボックス
-    ['morning', 'afternoon', 'night'].forEach(taskId => {
-        const checkbox = document.getElementById(taskId);
-        checkbox.addEventListener('change', async (e) => {
-            const checked = e.target.checked;
-            updateTaskStyle(taskId, checked);
-
-            // APIにタスクを送信
-            await manager.setTask(taskId, checked);
-            await updateUI();
-        });
-    });
-
     // スタンプボタン
     const stampButton = document.getElementById('stampButton');
     if (stampButton) {
@@ -199,5 +247,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-
 });
