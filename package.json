@@ -1,7 +1,8 @@
 {
-  "name": "task-dragon",
-  "version": "1.0.0",
-  "description": "Dragon task management app for kids",
+  "name": "level-up-quest",
+  "version": "2.0.0",
+  "description": "Level up quest - RPG style task management app for kids",
+  "type": "module",
   "scripts": {
     "dev": "vercel dev"
   },

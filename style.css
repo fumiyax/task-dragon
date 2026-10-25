@@ -20,6 +20,7 @@ header {
     text-align: center;
     color: white;
     margin-bottom: 30px;
+    position: relative;
 }
 
 h1 {
@@ -31,6 +32,23 @@ h1 {
 .date {
     font-size: 1.2rem;
     opacity: 0.9;
+}
+
+.back-link {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.back-link:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 main {
@@ -50,6 +68,83 @@ h2 {
     margin-bottom: 15px;
     border-bottom: 3px solid #667eea;
     padding-bottom: 5px;
+}
+
+/* キャラクター情報 */
+.character-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.character-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.level-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.level-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    opacity: 0.9;
+}
+
+.level-value {
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.title-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-icon {
+    font-size: 2.5rem;
+}
+
+.title-text {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.job-progress {
+    margin-top: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd89b 0%, #19547b 100%);
+    transition: width 0.5s ease;
+    border-radius: 15px;
+}
+
+.progress-text {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    opacity: 0.95;
 }
 
 /* タスクセクション */
@@ -112,129 +207,101 @@ h2 {
     color: #667eea;
 }
 
-/* 卵セクション */
-.egg-container {
+/* スタンプセクション */
+.stamp-section {
     text-align: center;
-    margin: 20px 0;
 }
 
-.egg {
-    font-size: 8rem;
-    animation: float 3s ease-in-out infinite;
-    display: inline-block;
+#stampArea {
+    padding: 20px;
 }
 
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-.egg.hatching {
-    animation: shake 0.5s ease-in-out infinite;
-}
-
-@keyframes shake {
-    0%, 100% {
-        transform: rotate(0deg);
-    }
-    25% {
-        transform: rotate(-10deg);
-    }
-    75% {
-        transform: rotate(10deg);
-    }
-}
-
-.egg-message {
-    font-size: 1.2rem;
-    color: #666;
-    margin-top: 10px;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 30px;
-    background: #e9ecef;
-    border-radius: 15px;
-    overflow: hidden;
-    margin: 15px 0;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-    transition: width 0.5s ease;
-    border-radius: 15px;
-}
-
-.progress-text {
-    text-align: center;
-    font-size: 1.2rem;
+.stamp-button {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 20px 40px;
+    font-size: 1.5rem;
     font-weight: bold;
-    color: #667eea;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    transition: all 0.3s ease;
+    font-family: inherit;
 }
 
-.encourage-message {
-    text-align: center;
-    font-size: 1.1rem;
-    color: #28a745;
-    margin-top: 10px;
+.stamp-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
+}
+
+.stamp-button:active {
+    transform: translateY(0);
+}
+
+.stamp-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.stamp-message {
+    margin-top: 15px;
+    font-size: 1.2rem;
     font-weight: bold;
     min-height: 1.5rem;
 }
 
-/* ドラゴンコレクション */
-.dragon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+.stamp-message.success {
+    color: #28a745;
 }
 
-.dragon-card {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border-radius: 15px;
-    padding: 15px;
-    text-align: center;
+.stamp-message.already {
+    color: #ffc107;
+}
+
+.stamped-display {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
     color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    padding: 30px;
+    border-radius: 15px;
+    font-size: 1.3rem;
 }
 
-.dragon-card:hover {
-    transform: scale(1.05);
+.stamped-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
 }
 
-.dragon-icon {
-    font-size: 3rem;
-    margin-bottom: 5px;
+/* ボタングループ */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.dragon-name {
-    font-size: 0.9rem;
-    font-weight: bold;
-}
-
-.dragon-date {
-    font-size: 0.7rem;
-    opacity: 0.8;
-    margin-top: 5px;
-}
-
-.empty-message {
-    text-align: center;
-    color: #999;
-    padding: 40px;
-    font-size: 1.1rem;
-}
-
-/* リセットボタン */
-.reset-btn {
+.secondary-btn {
     display: block;
-    margin: 20px auto 0;
+    padding: 15px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    font-family: inherit;
+}
+
+.secondary-btn:hover {
+    background: #5568d3;
+}
+
+.reset-btn {
     padding: 10px 20px;
     background: #dc3545;
     color: white;
@@ -243,16 +310,103 @@ h2 {
     cursor: pointer;
     font-size: 0.9rem;
     transition: background 0.3s ease;
+    font-family: inherit;
 }
 
 .reset-btn:hover {
     background: #c82333;
 }
 
+/* 履歴ページ */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.history-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid #667eea;
+}
+
+.history-item.title-changed {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe6f0 100%);
+    border-left: 5px solid #f5576c;
+}
+
+.history-date {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.history-level {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.level-badge {
+    background: #667eea;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.arrow {
+    color: #999;
+    font-size: 1.2rem;
+}
+
+.history-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+}
+
+.history-title .title {
+    font-weight: bold;
+    color: #333;
+}
+
+.history-title .title.highlight {
+    color: #f5576c;
+    font-size: 1.4rem;
+}
+
+.history-title .celebration {
+    font-size: 1.5rem;
+}
+
+.loading, .empty-message, .error-message {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1rem;
+    color: #999;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
 /* レスポンシブ */
 @media (max-width: 600px) {
     h1 {
         font-size: 2rem;
+    }
+
+    .level-value {
+        font-size: 2.5rem;
+    }
+
+    .title-text {
+        font-size: 1.5rem;
     }
 
     .task-icon {
@@ -263,7 +417,8 @@ h2 {
         font-size: 1.2rem;
     }
 
-    .egg {
-        font-size: 6rem;
+    .stamp-button {
+        font-size: 1.2rem;
+        padding: 15px 30px;
     }
 }

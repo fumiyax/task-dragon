@@ -3,17 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ドラゴンタスク</title>
+    <title>レベルアップクエスト</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🐉 ドラゴンタスク</h1>
+            <h1>⚔️ レベルアップクエスト</h1>
             <p class="date" id="currentDate"></p>
         </header>
 
         <main>
+            <!-- キャラクター情報 -->
+            <section class="character-section">
+                <div class="character-info">
+                    <div class="level-display">
+                        <span class="level-label">LV</span>
+                        <span class="level-value" id="levelValue">1</span>
+                    </div>
+                    <div class="title-display">
+                        <span class="title-icon" id="titleIcon">⚔️</span>
+                        <span class="title-text" id="titleText">見習い剣士</span>
+                    </div>
+                </div>
+                <div class="job-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="jobProgressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="jobName">剣士</span>: <span id="jobLevel">1</span> / 100
+                    </div>
+                </div>
+            </section>
+
             <!-- 今日のタスク -->
             <section class="tasks-section">
                 <h2>きょうのタスク</h2>
@@ -45,32 +67,22 @@
                 </div>
             </section>
 
-            <!-- ドラゴンの卵 -->
-            <section class="egg-section">
-                <h2>ドラゴンのたまご</h2>
-                <div class="egg-container">
-                    <div class="egg" id="egg">🥚</div>
-                    <div class="egg-message" id="eggMessage">たまごをそだてよう！</div>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="progress-text">
-                    <span id="progressDays">0</span> / 7 にち
-                </div>
-                <div class="encourage-message" id="encourageMessage"></div>
-            </section>
-
-            <!-- ドラゴンコレクション -->
-            <section class="collection-section">
-                <h2>ドラゴンコレクション</h2>
-                <div class="dragon-grid" id="dragonGrid">
-                    <div class="empty-message">まだドラゴンがいません</div>
+            <!-- パパの承認 -->
+            <section class="stamp-section">
+                <h2>パパのしょうにん</h2>
+                <div id="stampArea">
+                    <button class="stamp-button" id="stampButton">
+                        ✨ よくできました！ ✨
+                    </button>
+                    <p class="stamp-message" id="stampMessage"></p>
                 </div>
             </section>
 
-            <!-- リセットボタン（開発用） -->
-            <button class="reset-btn" id="resetBtn">データをリセット</button>
+            <!-- ボタン -->
+            <div class="button-group">
+                <a href="history.html" class="secondary-btn">📜 スタンプれきし</a>
+                <button class="reset-btn" id="resetBtn">データをリセット</button>
+            </div>
         </main>
     </div>
 

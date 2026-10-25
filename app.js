@@ -1,13 +1,14 @@
-// API Base URL
+// レベルアップクエスト - メインスクリプト
+
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
 // データ管理
-class TaskManager {
+class QuestManager {
     constructor() {
         this.data = {
             todayTasks: { morning: false, afternoon: false, night: false },
-            currentEgg: { startDate: '', checkCount: 0 },
-            dragons: []
+            character: { level: 1, title: '見習い剣士', job: '剣士', icon: '⚔️', jobLevel: 1, jobProgress: { current: 1, max: 100, percentage: 1 } },
+            hasStampToday: false
         };
         this.today = this.getToday();
     }
@@ -20,22 +21,8 @@ class TaskManager {
             return this.data;
         } catch (error) {
             console.error('Error loading data:', error);
-            // フォールバック：localStorageから読み込み
-            return this.loadFromLocalStorage();
+            return this.data;
         }
-    }
-
-    loadFromLocalStorage() {
-        const saved = localStorage.getItem('dragonTaskData');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            this.data = {
-                todayTasks: parsed.tasks?.[this.today] || { morning: false, afternoon: false, night: false },
-                currentEgg: parsed.currentEgg || { startDate: this.today, checkCount: 0 },
-                dragons: parsed.dragons || []
-            };
-        }
-        return this.data;
     }
 
     getToday() {
@@ -53,79 +40,47 @@ class TaskManager {
 
             if (!response.ok) throw new Error('Failed to update task');
 
-            const result = await response.json();
-
             // ローカルデータを更新
             this.data.todayTasks[taskType] = checked;
-            this.data.currentEgg.checkCount = result.totalChecks;
 
-            // 孵化した場合
-            if (result.hatched) {
-                this.showHatchAnimation(result.hatched);
-            }
-
-            return result;
+            return await response.json();
         } catch (error) {
             console.error('Error updating task:', error);
-            // フォールバック：localStorageに保存
-            this.saveToLocalStorage(taskType, checked);
         }
     }
 
-    saveToLocalStorage(taskType, checked) {
-        const saved = localStorage.getItem('dragonTaskData') || '{"tasks":{},"currentEgg":null,"dragons":[]}';
-        const data = JSON.parse(saved);
+    async stamp() {
+        try {
+            const response = await fetch(`${API_BASE}/api/stamp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
 
-        if (!data.tasks[this.today]) {
-            data.tasks[this.today] = { morning: false, afternoon: false, night: false };
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error);
+            }
+
+            const result = await response.json();
+            this.showLevelUpAnimation(result);
+            return result;
+        } catch (error) {
+            console.error('Error stamping:', error);
+            throw error;
         }
-        data.tasks[this.today][taskType] = checked;
-
-        localStorage.setItem('dragonTaskData', JSON.stringify(data));
-        this.data.todayTasks = data.tasks[this.today];
     }
 
-    showHatchAnimation(dragon) {
-        const egg = document.getElementById('egg');
-        const eggMessage = document.getElementById('eggMessage');
+    showLevelUpAnimation(result) {
+        const stampArea = document.getElementById('stampArea');
+        const messageEl = document.getElementById('stampMessage');
 
-        // 卵を揺らす
-        egg.classList.add('hatching');
-        eggMessage.textContent = 'たまごがわれる！';
+        messageEl.textContent = `${result.titleBefore} → ${result.titleAfter} レベルアップ！🎉`;
+        messageEl.className = 'stamp-message success';
 
-        setTimeout(() => {
-            // ドラゴンに変化
-            egg.textContent = dragon.icon;
-            egg.classList.remove('hatching');
-            eggMessage.textContent = `${dragon.name}がうまれた！🎉`;
-
-            setTimeout(async () => {
-                // 元に戻す
-                egg.textContent = '🥚';
-                eggMessage.textContent = 'あたらしいたまごをそだてよう！';
-                // データを再読み込み
-                await this.loadData();
-                updateUI();
-            }, 3000);
-        }, 1500);
-    }
-
-    getProgress() {
-        const startDate = new Date(this.data.currentEgg.startDate);
-        const today = new Date(this.today);
-        const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-        const days = Math.min(daysDiff + 1, 7);
-        const checkCount = this.data.currentEgg.checkCount || 0;
-
-        return { days, checkCount, percentage: (checkCount / 21) * 100 };
-    }
-
-    async reset() {
-        if (confirm('すべてのデータをリセットしますか？')) {
-            // TODO: Add reset API endpoint if needed
-            localStorage.removeItem('dragonTaskData');
-            location.reload();
-        }
+        setTimeout(async () => {
+            await this.loadData();
+            updateUI();
+        }, 2000);
     }
 }
 
@@ -135,7 +90,7 @@ let manager;
 // UIの更新
 async function updateUI() {
     if (!manager) {
-        manager = new TaskManager();
+        manager = new QuestManager();
     }
 
     // 常に最新データを取得
@@ -145,6 +100,15 @@ async function updateUI() {
     const date = new Date();
     const dateStr = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
     document.getElementById('currentDate').textContent = dateStr;
+
+    // キャラクター情報
+    const char = manager.data.character;
+    document.getElementById('levelValue').textContent = char.level;
+    document.getElementById('titleIcon').textContent = char.icon;
+    document.getElementById('titleText').textContent = char.title;
+    document.getElementById('jobName').textContent = char.job;
+    document.getElementById('jobLevel').textContent = char.jobLevel;
+    document.getElementById('jobProgressFill').style.width = `${char.jobProgress.percentage}%`;
 
     // タスクの状態を復元
     const todayTasks = manager.data.todayTasks;
@@ -161,16 +125,8 @@ async function updateUI() {
     const todayCount = [todayTasks.morning, todayTasks.afternoon, todayTasks.night].filter(Boolean).length;
     document.getElementById('todayCount').textContent = todayCount;
 
-    // 進捗表示
-    const progress = manager.getProgress();
-    document.getElementById('progressFill').style.width = `${progress.percentage}%`;
-    document.getElementById('progressDays').textContent = progress.days;
-
-    // 励ましメッセージ
-    updateEncourageMessage(progress.checkCount, progress.days);
-
-    // ドラゴンコレクション
-    displayDragons(manager.data.dragons);
+    // スタンプ状態
+    updateStampUI(manager.data.hasStampToday);
 }
 
 function updateTaskStyle(taskId, checked) {
@@ -183,53 +139,28 @@ function updateTaskStyle(taskId, checked) {
     }
 }
 
-function updateEncourageMessage(checkCount, days) {
-    const messageEl = document.getElementById('encourageMessage');
-    const needed = 18;
-    const remaining = needed - checkCount;
+function updateStampUI(hasStamp) {
+    const stampArea = document.getElementById('stampArea');
+    const stampButton = document.getElementById('stampButton');
+    const messageEl = document.getElementById('stampMessage');
 
-    if (checkCount >= needed) {
-        messageEl.textContent = 'もうすぐうまれるよ！🎉';
-        messageEl.style.color = '#28a745';
-    } else if (remaining <= 3) {
-        messageEl.textContent = `あと${remaining}かいでうまれるよ！がんばれ！💪`;
-        messageEl.style.color = '#ffc107';
-    } else if (days >= 4) {
-        messageEl.textContent = `あと${remaining}かい！もうすこし！✨`;
-        messageEl.style.color = '#17a2b8';
-    } else if (checkCount > 0) {
-        messageEl.textContent = 'いいちょうし！つづけよう！😊';
-        messageEl.style.color = '#28a745';
-    } else {
-        messageEl.textContent = '';
-    }
-}
-
-function displayDragons(dragons) {
-    const grid = document.getElementById('dragonGrid');
-
-    if (!dragons || dragons.length === 0) {
-        grid.innerHTML = '<div class="empty-message">まだドラゴンがいません</div>';
-        return;
-    }
-
-    grid.innerHTML = dragons.map(dragon => {
-        const date = new Date(dragon.hatchedDate);
-        const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-
-        return `
-            <div class="dragon-card" style="background: ${dragon.color}">
-                <div class="dragon-icon">${dragon.icon}</div>
-                <div class="dragon-name">${dragon.name}</div>
-                <div class="dragon-date">${dateStr}</div>
+    if (hasStamp) {
+        stampArea.innerHTML = `
+            <div class="stamped-display">
+                <div class="stamped-icon">✅</div>
+                <div>きょうはもうスタンプをおしました！</div>
             </div>
         `;
-    }).join('');
+    } else {
+        stampButton.disabled = false;
+        messageEl.textContent = '';
+        messageEl.className = 'stamp-message';
+    }
 }
 
 // イベントリスナー
 document.addEventListener('DOMContentLoaded', async () => {
-    manager = new TaskManager();
+    manager = new QuestManager();
 
     // 初期表示
     await updateUI();
@@ -247,8 +178,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    // スタンプボタン
+    const stampButton = document.getElementById('stampButton');
+    if (stampButton) {
+        stampButton.addEventListener('click', async () => {
+            try {
+                stampButton.disabled = true;
+                await manager.stamp();
+                await updateUI();
+            } catch (error) {
+                const messageEl = document.getElementById('stampMessage');
+                if (error.message === 'Already stamped today') {
+                    messageEl.textContent = 'きょうはもうスタンプをおしました';
+                    messageEl.className = 'stamp-message already';
+                } else {
+                    messageEl.textContent = 'エラーがはっせいしました';
+                    messageEl.className = 'stamp-message';
+                }
+                stampButton.disabled = false;
+            }
+        });
+    }
+
     // リセットボタン
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        manager.reset();
-    });
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', async () => {
+            if (confirm('すべてのデータをリセットしますか？')) {
+                // TODO: Add reset API endpoint if needed
+                alert('リセット機能は管理者に連絡してください');
+            }
+        });
+    }
 });
