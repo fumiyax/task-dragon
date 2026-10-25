@@ -64,6 +64,27 @@
         </main>
     </div>
 
+    <!-- 合言葉モーダル -->
+    <div id="passwordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>👑 王様の合言葉</h2>
+            <div class="password-form">
+                <input type="tel"
+                       id="passwordInput"
+                       placeholder="合言葉を入力"
+                       class="task-input"
+                       inputmode="numeric"
+                       pattern="[0-9]*"
+                       maxlength="3">
+                <div class="modal-buttons">
+                    <button id="submitPasswordBtn" class="add-btn">確認</button>
+                    <button id="cancelPasswordBtn" class="add-btn">キャンセル</button>
+                </div>
+                <p class="stamp-message" id="passwordError"></p>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

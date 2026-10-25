@@ -243,21 +243,75 @@ document.addEventListener('DOMContentLoaded', async () => {
     // スタンプボタン
     const stampButton = document.getElementById('stampButton');
     if (stampButton) {
-        stampButton.addEventListener('click', async () => {
-            try {
-                stampButton.disabled = true;
-                await manager.stamp();
-                await updateUI();
-            } catch (error) {
-                const messageEl = document.getElementById('stampMessage');
-                if (error.message === 'Already stamped today') {
-                    messageEl.textContent = '今日はもうスタンプを押しました';
-                    messageEl.className = 'stamp-message already';
-                } else {
-                    messageEl.textContent = 'エラーが発生しました';
-                    messageEl.className = 'stamp-message';
+        stampButton.addEventListener('click', () => {
+            // 合言葉モーダルを表示
+            document.getElementById('passwordModal').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('passwordInput').focus();
+        });
+    }
+
+    // 合言葉確認ボタン
+    const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+    if (submitPasswordBtn) {
+        submitPasswordBtn.addEventListener('click', async () => {
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('passwordError');
+
+            if (password === '238') {
+                // 正しい合言葉
+                document.getElementById('passwordModal').style.display = 'none';
+
+                try {
+                    stampButton.disabled = true;
+                    await manager.stamp();
+                    await updateUI();
+                } catch (error) {
+                    const messageEl = document.getElementById('stampMessage');
+                    if (error.message === 'Already stamped today') {
+                        messageEl.textContent = '今日はもうスタンプを押しました';
+                        messageEl.className = 'stamp-message already';
+                    } else {
+                        messageEl.textContent = 'エラーが発生しました';
+                        messageEl.className = 'stamp-message';
+                    }
+                    stampButton.disabled = false;
                 }
-                stampButton.disabled = false;
+            } else {
+                // 間違った合言葉
+                errorEl.textContent = '合言葉が違います';
+                errorEl.className = 'stamp-message';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        });
+    }
+
+    // 合言葉キャンセルボタン
+    const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+    if (cancelPasswordBtn) {
+        cancelPasswordBtn.addEventListener('click', () => {
+            document.getElementById('passwordModal').style.display = 'none';
+        });
+    }
+
+    // モーダル外クリックで閉じる
+    const passwordModal = document.getElementById('passwordModal');
+    if (passwordModal) {
+        passwordModal.addEventListener('click', (e) => {
+            if (e.target.id === 'passwordModal') {
+                passwordModal.style.display = 'none';
+            }
+        });
+    }
+
+    // Enterキーで確認
+    const passwordInput = document.getElementById('passwordInput');
+    if (passwordInput) {
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitPasswordBtn.click();
             }
         });
     }
