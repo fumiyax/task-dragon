@@ -14,11 +14,11 @@
 
 ### バージョン管理
 - メインファイル（index.html, app.js, style.css）を修正するたびにバージョン番号を1つ上げること
-- 現在のバージョン: 1.0.0
+- 現在のバージョン: 2.0.0
 
 ### デプロイ
 - Vercel にデプロイ
-- リポジトリ: （作成後に記載）
+- リポジトリ: https://github.com/fumiyax/task-dragon
 - デプロイURL: （デプロイ後に記載）
 
 ### バックアップ
@@ -30,4 +30,11 @@
 - HTML5
 - CSS3
 - Vanilla JavaScript
-- localStorage
+- Vercel Serverless Functions
+- Neon DB (PostgreSQL)
+- @vercel/postgres
+
+## データベース
+- Neon DB を使用
+- テーブル: tasks, current_egg, dragons
+- 環境変数はVercelの環境変数に設定

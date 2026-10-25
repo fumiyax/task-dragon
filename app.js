@@ -1,37 +1,41 @@
-// ドラゴンの種類
-const DRAGON_TYPES = [
-    { icon: '🔥', name: 'ファイアドラゴン', color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-    { icon: '💧', name: 'ウォータードラゴン', color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-    { icon: '🌿', name: 'フォレストドラゴン', color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' },
-    { icon: '⚡', name: 'サンダードラゴン', color: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
-    { icon: '🌟', name: 'スタードラゴン', color: 'linear-gradient(135deg, #ffd89b 0%, #19547b 100%)' },
-    { icon: '🌈', name: 'レインボードラゴン', color: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
-    { icon: '❄️', name: 'アイスドラゴン', color: 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)' },
-    { icon: '🌙', name: 'ムーンドラゴン', color: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' }
-];
+// API Base URL
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
 // データ管理
 class TaskManager {
     constructor() {
-        this.data = this.loadData();
-        this.today = this.getToday();
-        this.initEggIfNeeded();
-    }
-
-    loadData() {
-        const saved = localStorage.getItem('dragonTaskData');
-        if (saved) {
-            return JSON.parse(saved);
-        }
-        return {
-            tasks: {},
-            currentEgg: null,
+        this.data = {
+            todayTasks: { morning: false, afternoon: false, night: false },
+            currentEgg: { startDate: '', checkCount: 0 },
             dragons: []
         };
+        this.today = this.getToday();
     }
 
-    saveData() {
-        localStorage.setItem('dragonTaskData', JSON.stringify(this.data));
+    async loadData() {
+        try {
+            const response = await fetch(`${API_BASE}/api/data`);
+            if (!response.ok) throw new Error('Failed to fetch data');
+            this.data = await response.json();
+            return this.data;
+        } catch (error) {
+            console.error('Error loading data:', error);
+            // フォールバック：localStorageから読み込み
+            return this.loadFromLocalStorage();
+        }
+    }
+
+    loadFromLocalStorage() {
+        const saved = localStorage.getItem('dragonTaskData');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            this.data = {
+                todayTasks: parsed.tasks?.[this.today] || { morning: false, afternoon: false, night: false },
+                currentEgg: parsed.currentEgg || { startDate: this.today, checkCount: 0 },
+                dragons: parsed.dragons || []
+            };
+        }
+        return this.data;
     }
 
     getToday() {
@@ -39,86 +43,46 @@ class TaskManager {
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     }
 
-    initEggIfNeeded() {
-        if (!this.data.currentEgg) {
-            this.data.currentEgg = {
-                startDate: this.today,
-                checkCount: 0
-            };
-            this.saveData();
-        }
-    }
+    async setTask(taskType, checked) {
+        try {
+            const response = await fetch(`${API_BASE}/api/update-task`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskType, checked })
+            });
 
-    getTodayTasks() {
-        if (!this.data.tasks[this.today]) {
-            this.data.tasks[this.today] = {
-                morning: false,
-                afternoon: false,
-                night: false
-            };
-        }
-        return this.data.tasks[this.today];
-    }
+            if (!response.ok) throw new Error('Failed to update task');
 
-    setTask(taskType, checked) {
-        this.data.tasks[this.today][taskType] = checked;
-        this.updateEggProgress();
-        this.saveData();
-    }
+            const result = await response.json();
 
-    updateEggProgress() {
-        // 7日間のチェック数を計算
-        const startDate = new Date(this.data.currentEgg.startDate);
-        const today = new Date(this.today);
-        const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            // ローカルデータを更新
+            this.data.todayTasks[taskType] = checked;
+            this.data.currentEgg.checkCount = result.totalChecks;
 
-        let totalChecks = 0;
-        for (let i = 0; i <= daysDiff && i < 7; i++) {
-            const date = new Date(startDate);
-            date.setDate(date.getDate() + i);
-            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
-            if (this.data.tasks[dateStr]) {
-                const tasks = this.data.tasks[dateStr];
-                if (tasks.morning) totalChecks++;
-                if (tasks.afternoon) totalChecks++;
-                if (tasks.night) totalChecks++;
+            // 孵化した場合
+            if (result.hatched) {
+                this.showHatchAnimation(result.hatched);
             }
-        }
 
-        this.data.currentEgg.checkCount = totalChecks;
-
-        // 孵化判定（7日間で18回以上チェック、または7日経過）
-        if (daysDiff >= 6 && totalChecks >= 18) {
-            this.hatchEgg();
-        } else if (daysDiff >= 6) {
-            // 7日経過したが条件未達成の場合、卵をリセット
-            this.resetEgg();
+            return result;
+        } catch (error) {
+            console.error('Error updating task:', error);
+            // フォールバック：localStorageに保存
+            this.saveToLocalStorage(taskType, checked);
         }
     }
 
-    hatchEgg() {
-        // ランダムにドラゴンを選択
-        const randomDragon = DRAGON_TYPES[Math.floor(Math.random() * DRAGON_TYPES.length)];
+    saveToLocalStorage(taskType, checked) {
+        const saved = localStorage.getItem('dragonTaskData') || '{"tasks":{},"currentEgg":null,"dragons":[]}';
+        const data = JSON.parse(saved);
 
-        this.data.dragons.push({
-            ...randomDragon,
-            hatchedDate: this.today
-        });
+        if (!data.tasks[this.today]) {
+            data.tasks[this.today] = { morning: false, afternoon: false, night: false };
+        }
+        data.tasks[this.today][taskType] = checked;
 
-        // 卵をリセット
-        this.resetEgg();
-
-        // 孵化アニメーション
-        this.showHatchAnimation(randomDragon);
-    }
-
-    resetEgg() {
-        this.data.currentEgg = {
-            startDate: this.today,
-            checkCount: 0
-        };
-        this.saveData();
+        localStorage.setItem('dragonTaskData', JSON.stringify(data));
+        this.data.todayTasks = data.tasks[this.today];
     }
 
     showHatchAnimation(dragon) {
@@ -135,11 +99,12 @@ class TaskManager {
             egg.classList.remove('hatching');
             eggMessage.textContent = `${dragon.name}がうまれた！🎉`;
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 // 元に戻す
                 egg.textContent = '🥚';
                 eggMessage.textContent = 'あたらしいたまごをそだてよう！';
-                this.saveData();
+                // データを再読み込み
+                await this.loadData();
                 updateUI();
             }, 3000);
         }, 1500);
@@ -150,22 +115,29 @@ class TaskManager {
         const today = new Date(this.today);
         const daysDiff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
         const days = Math.min(daysDiff + 1, 7);
-        const checkCount = this.data.currentEgg.checkCount;
+        const checkCount = this.data.currentEgg.checkCount || 0;
 
         return { days, checkCount, percentage: (checkCount / 21) * 100 };
     }
 
-    reset() {
+    async reset() {
         if (confirm('すべてのデータをリセットしますか？')) {
+            // TODO: Add reset API endpoint if needed
             localStorage.removeItem('dragonTaskData');
             location.reload();
         }
     }
 }
 
+// グローバルマネージャーインスタンス
+let manager;
+
 // UIの更新
-function updateUI() {
-    const manager = new TaskManager();
+async function updateUI() {
+    if (!manager) {
+        manager = new TaskManager();
+        await manager.loadData();
+    }
 
     // 日付表示
     const date = new Date();
@@ -173,7 +145,7 @@ function updateUI() {
     document.getElementById('currentDate').textContent = dateStr;
 
     // タスクの状態を復元
-    const todayTasks = manager.getTodayTasks();
+    const todayTasks = manager.data.todayTasks;
     document.getElementById('morning').checked = todayTasks.morning;
     document.getElementById('afternoon').checked = todayTasks.afternoon;
     document.getElementById('night').checked = todayTasks.night;
@@ -234,7 +206,7 @@ function updateEncourageMessage(checkCount, days) {
 function displayDragons(dragons) {
     const grid = document.getElementById('dragonGrid');
 
-    if (dragons.length === 0) {
+    if (!dragons || dragons.length === 0) {
         grid.innerHTML = '<div class="empty-message">まだドラゴンがいません</div>';
         return;
     }
@@ -250,23 +222,26 @@ function displayDragons(dragons) {
                 <div class="dragon-date">${dateStr}</div>
             </div>
         `;
-    }).reverse().join('');
+    }).join('');
 }
 
 // イベントリスナー
-document.addEventListener('DOMContentLoaded', () => {
-    const manager = new TaskManager();
+document.addEventListener('DOMContentLoaded', async () => {
+    manager = new TaskManager();
 
     // 初期表示
-    updateUI();
+    await updateUI();
 
     // タスクチェックボックス
     ['morning', 'afternoon', 'night'].forEach(taskId => {
         const checkbox = document.getElementById(taskId);
-        checkbox.addEventListener('change', (e) => {
-            manager.setTask(taskId, e.target.checked);
-            updateTaskStyle(taskId, e.target.checked);
-            updateUI();
+        checkbox.addEventListener('change', async (e) => {
+            const checked = e.target.checked;
+            updateTaskStyle(taskId, checked);
+
+            // APIにタスクを送信
+            await manager.setTask(taskId, checked);
+            await updateUI();
         });
     });
 
