@@ -644,18 +644,32 @@ h2 {
         padding: 12px 24px;
     }
 
+    /* タスク行を1行に収める */
     .daily-task-item {
-        grid-template-columns: 40px 1fr;
-        gap: 8px;
+        grid-template-columns: 30px 1fr auto 60px;
+        gap: 4px;
+        padding: 8px 6px;
     }
 
-    .task-timing {
-        grid-column: 1 / -1;
-        justify-content: center;
+    .plan-checkbox, .complete-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+
+    .task-name {
+        font-size: 0.85rem;
+    }
+
+    .timing-btn {
+        padding: 4px 6px;
+        font-size: 0.75rem;
     }
 
     .task-complete-check {
-        grid-column: 1 / -1;
-        justify-content: center;
+        gap: 4px;
+    }
+
+    .complete-label {
+        font-size: 0.75rem;
     }
 }
