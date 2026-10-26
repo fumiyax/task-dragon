@@ -188,7 +188,6 @@ function displayTasks() {
         html += `<div class="category-section">
             <h3 class="category-header">${category}</h3>
             ${categoryTasks.map(task => `
-        <div class="task-wrapper">
             <div class="daily-task-item ${task.isPlanned ? 'planned' : ''} ${task.isCompleted ? 'completed' : ''}" data-id="${task.id}">
                 <div class="task-plan-check">
                     <input type="checkbox"
@@ -197,6 +196,14 @@ function displayTasks() {
                            onchange="togglePlan(${task.id}, this.checked)">
                 </div>
                 <div class="task-name">${task.name}</div>
+                <div>
+                    <input type="text"
+                           class="note-input"
+                           placeholder="例: 3ページ"
+                           value="${task.note || ''}"
+                           onchange="updateNote(${task.id}, this.value)"
+                           ${!task.isPlanned ? 'disabled' : ''}>
+                </div>
                 <div class="task-timing">
                     <button class="timing-btn ${task.timing === 'morning' ? 'active' : ''}"
                             onclick="setTiming(${task.id}, 'morning')"
@@ -217,15 +224,6 @@ function displayTasks() {
                     <span class="complete-label">完了</span>
                 </div>
             </div>
-            <div class="task-note-row">
-                <input type="text"
-                       class="note-input"
-                       placeholder="備考（例: 3ページ）"
-                       value="${task.note || ''}"
-                       onchange="updateNote(${task.id}, this.value)"
-                       ${!task.isPlanned ? 'disabled' : ''}>
-            </div>
-        </div>
     `).join('')}
         </div>`;
     });
