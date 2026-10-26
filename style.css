@@ -256,10 +256,11 @@ h2 {
 
 .daily-task-item.planned {
     background: #000;
+    border-left: 4px solid #00ff00;
 }
 
 .daily-task-item.completed {
-    background: #000;
+    background: rgba(0, 255, 0, 0.1);
 }
 
 .task-plan-check {
@@ -272,7 +273,7 @@ h2 {
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: #fff;
+    accent-color: #00ff00;
 }
 
 .task-name {
@@ -304,9 +305,9 @@ h2 {
 }
 
 .timing-btn.active {
-    background: #fff;
+    background: #00ff00;
     color: #000;
-    border: 1px solid #fff;
+    border: 1px solid #00ff00;
 }
 
 .timing-btn:disabled {
