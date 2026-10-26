@@ -59,9 +59,16 @@
 - バージョン表記機能の追加
 
 ### デプロイ
-- Vercel にデプロイ
+- Vercel にデプロイ（main ブランチへのプッシュで自動デプロイ）
 - リポジトリ: https://github.com/fumiyax/task-dragon
 - デプロイURL: https://task-dragon.vercel.app（要確認）
+- **重要**: ファイル修正後は必ず git commit & push を実行してデプロイすること
+  1. バックアップを取る
+  2. ファイルを修正
+  3. バージョン番号を更新（index.html）
+  4. CLAUDE.md の変更履歴を更新
+  5. `git add`, `git commit`, `git push` を実行
+  6. Vercel が自動でデプロイを開始
 
 ### バックアップ
 - メインファイルを修正する前にバックアップを取ること
