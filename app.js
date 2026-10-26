@@ -463,4 +463,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // 他の端末の変更を同期: タブがアクティブになった時にリロード
+    document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden && manager) {
+            await updateUI();
+        }
+    });
+
+    // 定期的に同期（30秒ごと）
+    setInterval(async () => {
+        if (manager && !document.hidden) {
+            await manager.loadData();
+            displayTasks();
+            updateStampUI(manager.data.hasStampToday);
+        }
+    }, 30000);
 });

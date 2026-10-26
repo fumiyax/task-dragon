@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色パターンテスト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'MS Gothic', monospace;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+        }
+
+        .patterns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .pattern {
+            border: 2px solid #fff;
+            padding: 20px;
+        }
+
+        .pattern-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #fff;
+        }
+
+        .task-example {
+            margin-bottom: 30px;
+        }
+
+        .task-row {
+            display: grid;
+            grid-template-columns: 40px 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #fff;
+        }
+
+        .checkbox-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .task-name {
+            font-size: 0.85rem;
+        }
+
+        .timing-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .timing-btn {
+            padding: 6px 12px;
+            background: #000;
+            border: 1px solid #fff;
+            color: #fff;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+        }
+
+        .complete-area {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .complete-label {
+            font-size: 0.8rem;
+        }
+
+        /* パターン1: 緑（#00ff00） */
+        .pattern-1 input[type="checkbox"]:checked {
+            accent-color: #00ff00;
+        }
+
+        .pattern-1 .timing-btn.active {
+            background: #00ff00;
+            color: #000;
+            border-color: #00ff00;
+        }
+
+        .pattern-1 .task-row.planned {
+            border-left: 4px solid #00ff00;
+        }
+
+        .pattern-1 .task-row.completed {
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        /* パターン2: 黄色（#ffff00） */
+        .pattern-2 input[type="checkbox"]:checked {
+            accent-color: #ffff00;
+        }
+
+        .pattern-2 .timing-btn.active {
+            background: #ffff00;
+            color: #000;
+            border-color: #ffff00;
+        }
+
+        .pattern-2 .task-row.planned {
+            border-left: 4px solid #ffff00;
+        }
+
+        .pattern-2 .task-row.completed {
+            background: rgba(255, 255, 0, 0.1);
+        }
+
+        /* パターン3: シアン（#00ffff） */
+        .pattern-3 input[type="checkbox"]:checked {
+            accent-color: #00ffff;
+        }
+
+        .pattern-3 .timing-btn.active {
+            background: #00ffff;
+            color: #000;
+            border-color: #00ffff;
+        }
+
+        .pattern-3 .task-row.planned {
+            border-left: 4px solid #00ffff;
+        }
+
+        .pattern-3 .task-row.completed {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        /* パターン4: マゼンタ（#ff00ff） */
+        .pattern-4 input[type="checkbox"]:checked {
+            accent-color: #ff00ff;
+        }
+
+        .pattern-4 .timing-btn.active {
+            background: #ff00ff;
+            color: #000;
+            border-color: #ff00ff;
+        }
+
+        .pattern-4 .task-row.planned {
+            border-left: 4px solid #ff00ff;
+        }
+
+        .pattern-4 .task-row.completed {
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .patterns {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 色パターンテスト</h1>
+
+        <div class="patterns">
+            <!-- パターン1: 緑 -->
+            <div class="pattern pattern-1">
+                <div class="pattern-title">パターン1: 緑 (#00ff00)</div>
+                <div class="task-example">
+                    <div class="task-row">
+                        <div class="checkbox-area">
+                            <input type="checkbox">
+                        </div>
+                        <div class="task-name">宿題（音読）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">宿題（漢字）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn active">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned completed">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">水筒準備</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn active">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox" checked>
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- パターン2: 黄色 -->
+            <div class="pattern pattern-2">
+                <div class="pattern-title">パターン2: 黄色 (#ffff00)</div>
+                <div class="task-example">
+                    <div class="task-row">
+                        <div class="checkbox-area">
+                            <input type="checkbox">
+                        </div>
+                        <div class="task-name">宿題（音読）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">宿題（漢字）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn active">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned completed">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">水筒準備</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn active">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox" checked>
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- パターン3: シアン -->
+            <div class="pattern pattern-3">
+                <div class="pattern-title">パターン3: シアン (#00ffff)</div>
+                <div class="task-example">
+                    <div class="task-row">
+                        <div class="checkbox-area">
+                            <input type="checkbox">
+                        </div>
+                        <div class="task-name">宿題（音読）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">宿題（漢字）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn active">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned completed">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">水筒準備</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn active">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox" checked>
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- パターン4: マゼンタ -->
+            <div class="pattern pattern-4">
+                <div class="pattern-title">パターン4: マゼンタ (#ff00ff)</div>
+                <div class="task-example">
+                    <div class="task-row">
+                        <div class="checkbox-area">
+                            <input type="checkbox">
+                        </div>
+                        <div class="task-name">宿題（音読）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">宿題（漢字）</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn">朝</button>
+                            <button class="timing-btn active">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox">
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+
+                    <div class="task-row planned completed">
+                        <div class="checkbox-area">
+                            <input type="checkbox" checked>
+                        </div>
+                        <div class="task-name">水筒準備</div>
+                        <div class="timing-btns">
+                            <button class="timing-btn active">朝</button>
+                            <button class="timing-btn">昼</button>
+                            <button class="timing-btn">夜</button>
+                        </div>
+                        <div class="complete-area">
+                            <input type="checkbox" checked>
+                            <span class="complete-label">完了</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
