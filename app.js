@@ -240,12 +240,21 @@ async function togglePlan(taskId, isPlanned) {
 async function setTiming(taskId, timing) {
     const task = manager.tasks.find(t => t.id === taskId);
     const newTiming = task.timing === timing ? null : timing;
-    await manager.updateTask(taskId, { timing: newTiming });
+    await manager.updateTask(taskId, {
+        isPlanned: task.isPlanned,
+        timing: newTiming,
+        isCompleted: task.isCompleted
+    });
     displayTasks();
 }
 
 async function toggleComplete(taskId, isCompleted) {
-    await manager.updateTask(taskId, { isCompleted });
+    const task = manager.tasks.find(t => t.id === taskId);
+    await manager.updateTask(taskId, {
+        isPlanned: task.isPlanned,
+        timing: task.timing,
+        isCompleted
+    });
     displayTasks();
 }
 
