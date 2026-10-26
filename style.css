@@ -243,6 +243,10 @@ h2 {
     text-shadow: none;
 }
 
+.task-wrapper {
+    margin-bottom: 0;
+}
+
 .daily-task-item {
     display: grid;
     grid-template-columns: 40px 1fr auto auto;
@@ -252,6 +256,31 @@ h2 {
     padding: 12px;
     border: none;
     transition: all 0.1s ease;
+}
+
+.task-note-row {
+    background: #000;
+    padding: 0 12px 12px 12px;
+}
+
+.note-input {
+    width: 100%;
+    padding: 6px;
+    font-size: 0.75rem;
+    border: 1px solid #fff;
+    background: #000;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+}
+
+.note-input:focus {
+    outline: none;
+    background: #111;
+}
+
+.note-input:disabled {
+    opacity: 0.3;
+    border-color: #555;
 }
 
 .daily-task-item.planned {

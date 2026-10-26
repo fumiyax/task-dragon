@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
             // 指定日のタスク状態を取得
             const dailyTasks = await sql`
-                SELECT task_master_id, is_planned, timing, is_completed
+                SELECT task_master_id, is_planned, timing, is_completed, note
                 FROM daily_tasks
                 WHERE task_date = ${targetDate}
             `;
@@ -49,7 +49,8 @@ export default async function handler(req, res) {
                     category: task.category,
                     isPlanned: daily?.is_planned || false,
                     timing: daily?.timing || null,
-                    isCompleted: daily?.is_completed || false
+                    isCompleted: daily?.is_completed || false,
+                    note: daily?.note || ''
                 };
             });
 
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
 
         // POST: タスク状態を更新
         if (req.method === 'POST') {
-            const { taskId, isPlanned, timing, isCompleted } = req.body;
+            const { taskId, isPlanned, timing, isCompleted, note } = req.body;
 
             if (!taskId) {
                 return res.status(400).json({ error: 'Task ID is required' });
@@ -66,13 +67,14 @@ export default async function handler(req, res) {
 
             // UPSERT
             await sql`
-                INSERT INTO daily_tasks (task_date, task_master_id, is_planned, timing, is_completed, updated_at)
-                VALUES (${targetDate}, ${taskId}, ${isPlanned || false}, ${timing}, ${isCompleted || false}, CURRENT_TIMESTAMP)
+                INSERT INTO daily_tasks (task_date, task_master_id, is_planned, timing, is_completed, note, updated_at)
+                VALUES (${targetDate}, ${taskId}, ${isPlanned || false}, ${timing}, ${isCompleted || false}, ${note || ''}, CURRENT_TIMESTAMP)
                 ON CONFLICT (task_date, task_master_id)
                 DO UPDATE SET
                     is_planned = ${isPlanned || false},
                     timing = ${timing},
                     is_completed = ${isCompleted || false},
+                    note = ${note || ''},
                     updated_at = CURRENT_TIMESTAMP
             `;
 

@@ -81,6 +81,16 @@
                        inputmode="numeric"
                        pattern="[0-9]*"
                        maxlength="3">
+                <div id="levelInputArea" style="display: none;">
+                    <label style="color: #fff; font-size: 0.9rem; margin-top: 10px;">何レベルアップしますか？</label>
+                    <input type="number"
+                           id="levelInput"
+                           class="task-input"
+                           value="1"
+                           min="1"
+                           max="10"
+                           style="margin-top: 8px;">
+                </div>
                 <div class="modal-buttons">
                     <button id="submitPasswordBtn" class="add-btn">確認</button>
                     <button id="cancelPasswordBtn" class="add-btn">キャンセル</button>

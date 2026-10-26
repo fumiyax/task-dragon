@@ -82,11 +82,12 @@ class QuestManager {
         }
     }
 
-    async stamp() {
+    async stamp(levelIncrease = 1) {
         try {
             const response = await fetch(`${API_BASE}/api/stamp?date=${this.currentDate}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ levelIncrease })
             });
 
             if (!response.ok) {
@@ -187,32 +188,42 @@ function displayTasks() {
         html += `<div class="category-section">
             <h3 class="category-header">${category}</h3>
             ${categoryTasks.map(task => `
-        <div class="daily-task-item ${task.isPlanned ? 'planned' : ''} ${task.isCompleted ? 'completed' : ''}" data-id="${task.id}">
-            <div class="task-plan-check">
-                <input type="checkbox"
-                       class="plan-checkbox"
-                       ${task.isPlanned ? 'checked' : ''}
-                       onchange="togglePlan(${task.id}, this.checked)">
+        <div class="task-wrapper">
+            <div class="daily-task-item ${task.isPlanned ? 'planned' : ''} ${task.isCompleted ? 'completed' : ''}" data-id="${task.id}">
+                <div class="task-plan-check">
+                    <input type="checkbox"
+                           class="plan-checkbox"
+                           ${task.isPlanned ? 'checked' : ''}
+                           onchange="togglePlan(${task.id}, this.checked)">
+                </div>
+                <div class="task-name">${task.name}</div>
+                <div class="task-timing">
+                    <button class="timing-btn ${task.timing === 'morning' ? 'active' : ''}"
+                            onclick="setTiming(${task.id}, 'morning')"
+                            ${!task.isPlanned ? 'disabled' : ''}>朝</button>
+                    <button class="timing-btn ${task.timing === 'afternoon' ? 'active' : ''}"
+                            onclick="setTiming(${task.id}, 'afternoon')"
+                            ${!task.isPlanned ? 'disabled' : ''}>昼</button>
+                    <button class="timing-btn ${task.timing === 'night' ? 'active' : ''}"
+                            onclick="setTiming(${task.id}, 'night')"
+                            ${!task.isPlanned ? 'disabled' : ''}>夜</button>
+                </div>
+                <div class="task-complete-check">
+                    <input type="checkbox"
+                           class="complete-checkbox"
+                           ${task.isCompleted ? 'checked' : ''}
+                           onchange="toggleComplete(${task.id}, this.checked)"
+                           ${!task.isPlanned ? 'disabled' : ''}>
+                    <span class="complete-label">完了</span>
+                </div>
             </div>
-            <div class="task-name">${task.name}</div>
-            <div class="task-timing">
-                <button class="timing-btn ${task.timing === 'morning' ? 'active' : ''}"
-                        onclick="setTiming(${task.id}, 'morning')"
-                        ${!task.isPlanned ? 'disabled' : ''}>朝</button>
-                <button class="timing-btn ${task.timing === 'afternoon' ? 'active' : ''}"
-                        onclick="setTiming(${task.id}, 'afternoon')"
-                        ${!task.isPlanned ? 'disabled' : ''}>昼</button>
-                <button class="timing-btn ${task.timing === 'night' ? 'active' : ''}"
-                        onclick="setTiming(${task.id}, 'night')"
-                        ${!task.isPlanned ? 'disabled' : ''}>夜</button>
-            </div>
-            <div class="task-complete-check">
-                <input type="checkbox"
-                       class="complete-checkbox"
-                       ${task.isCompleted ? 'checked' : ''}
-                       onchange="toggleComplete(${task.id}, this.checked)"
+            <div class="task-note-row">
+                <input type="text"
+                       class="note-input"
+                       placeholder="備考（例: 3ページ）"
+                       value="${task.note || ''}"
+                       onchange="updateNote(${task.id}, this.value)"
                        ${!task.isPlanned ? 'disabled' : ''}>
-                <span class="complete-label">完了</span>
             </div>
         </div>
     `).join('')}
@@ -232,7 +243,8 @@ async function togglePlan(taskId, isPlanned) {
     await manager.updateTask(taskId, {
         isPlanned,
         timing: isPlanned ? (task.timing || null) : null,
-        isCompleted: isPlanned ? task.isCompleted : false
+        isCompleted: isPlanned ? task.isCompleted : false,
+        note: task.note || ''
     });
     displayTasks();
 }
@@ -243,7 +255,8 @@ async function setTiming(taskId, timing) {
     await manager.updateTask(taskId, {
         isPlanned: task.isPlanned,
         timing: newTiming,
-        isCompleted: task.isCompleted
+        isCompleted: task.isCompleted,
+        note: task.note || ''
     });
     displayTasks();
 }
@@ -253,9 +266,20 @@ async function toggleComplete(taskId, isCompleted) {
     await manager.updateTask(taskId, {
         isPlanned: task.isPlanned,
         timing: task.timing,
-        isCompleted
+        isCompleted,
+        note: task.note || ''
     });
     displayTasks();
+}
+
+async function updateNote(taskId, note) {
+    const task = manager.tasks.find(t => t.id === taskId);
+    await manager.updateTask(taskId, {
+        isPlanned: task.isPlanned,
+        timing: task.timing,
+        isCompleted: task.isCompleted,
+        note
+    });
 }
 
 function updateStampUI(hasStamp) {
@@ -325,19 +349,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 合言葉確認ボタン
     const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+    let passwordVerified = false;
+
     if (submitPasswordBtn) {
         submitPasswordBtn.addEventListener('click', async () => {
             const password = document.getElementById('passwordInput').value;
             const errorEl = document.getElementById('passwordError');
 
-            if (password === '238') {
-                // 正しい合言葉
+            if (!passwordVerified && password === '238') {
+                // 正しい合言葉 → レベル入力欄を表示
+                document.getElementById('levelInputArea').style.display = 'block';
+                document.getElementById('passwordInput').disabled = true;
+                document.getElementById('levelInput').focus();
+                passwordVerified = true;
+                submitPasswordBtn.textContent = 'レベルアップ';
+            } else if (passwordVerified) {
+                // レベル入力済み → スタンプ実行
+                const levelIncrease = parseInt(document.getElementById('levelInput').value) || 1;
                 document.getElementById('passwordModal').style.display = 'none';
 
                 try {
                     stampButton.disabled = true;
-                    await manager.stamp();
+                    await manager.stamp(levelIncrease);
                     await updateUI();
+
+                    // リセット
+                    passwordVerified = false;
+                    document.getElementById('levelInputArea').style.display = 'none';
+                    document.getElementById('passwordInput').disabled = false;
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('levelInput').value = '1';
+                    submitPasswordBtn.textContent = '確認';
                 } catch (error) {
                     const messageEl = document.getElementById('stampMessage');
                     if (error.message === 'Already stamped today') {
@@ -348,6 +390,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         messageEl.className = 'stamp-message';
                     }
                     stampButton.disabled = false;
+
+                    // リセット
+                    passwordVerified = false;
+                    document.getElementById('levelInputArea').style.display = 'none';
+                    document.getElementById('passwordInput').disabled = false;
+                    submitPasswordBtn.textContent = '確認';
                 }
             } else {
                 // 間違った合言葉
@@ -364,6 +412,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (cancelPasswordBtn) {
         cancelPasswordBtn.addEventListener('click', () => {
             document.getElementById('passwordModal').style.display = 'none';
+            passwordVerified = false;
+            document.getElementById('levelInputArea').style.display = 'none';
+            document.getElementById('passwordInput').disabled = false;
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('levelInput').value = '1';
+            submitPasswordBtn.textContent = '確認';
         });
     }
 

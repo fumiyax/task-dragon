@@ -29,7 +29,8 @@ export default async function handler(req, res) {
 
         // POST: スタンプを押す
         if (req.method === 'POST') {
-            return await handleStampPost(targetDate, res);
+            const { levelIncrease } = req.body || {};
+            return await handleStampPost(targetDate, res, levelIncrease || 1);
         }
 
         // DELETE: スタンプを解除
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
     }
 }
 
-async function handleStampPost(targetDate, res) {
+async function handleStampPost(targetDate, res, levelIncrease = 1) {
     try {
 
         // 既にスタンプがあるかチェック
@@ -62,7 +63,7 @@ async function handleStampPost(targetDate, res) {
         `;
 
         const currentLevel = characterResult[0]?.level || 1;
-        const newLevel = currentLevel + 1;
+        const newLevel = currentLevel + levelIncrease;
 
         const titleBefore = getTitle(currentLevel);
         const titleAfter = getTitle(newLevel);
